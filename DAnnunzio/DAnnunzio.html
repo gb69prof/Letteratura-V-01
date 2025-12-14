@@ -16,7 +16,7 @@
       --danger:#ff4d4d;
       --ok:#39d98a;
       --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
-      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      --sans: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     }
     html,body{height:100%;}
@@ -99,15 +99,15 @@
       gap: 16px;
       align-items: stretch;
     }
-    .spread.two{ grid-template-columns: 1fr 1fr; }
+    .spread.two{grid-template-columns: 1fr 1fr;}
 
     .page{
-      background: var(--paper);
-      color: var(--ink);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
+      background:var(--paper);
+      color:var(--ink);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
       border: 1px solid rgba(18,22,28,.08);
-      overflow: hidden;
+      overflow:hidden;
       position: relative;
       min-height: 560px;
     }
@@ -143,8 +143,8 @@
       font-size: 18px;
       line-height: 1.65;
     }
-    .page h1{ margin:0 0 10px; font-size: 26px; }
-    .page h2{ margin: 18px 0 10px; font-size: 20px; }
+    .page h1{margin:0 0 10px; font-size: 26px;}
+    .page h2{margin: 18px 0 10px; font-size: 20px;}
     .meta{
       font-family: var(--sans);
       font-size: 12px;
@@ -154,10 +154,10 @@
       flex-wrap: wrap;
       margin-bottom: 16px;
     }
-    .page p{ margin: 0 0 14px; }
+    .page p{margin: 0 0 14px;}
 
-    .page a{ color: var(--accent); }
-    .page a:hover{ text-decoration: underline; }
+    .page a{color: var(--accent);}
+    .page a:hover{text-decoration: underline;}
 
     blockquote{
       margin: 14px 0 16px;
@@ -168,7 +168,7 @@
       font-style: italic;
     }
 
-    /* “Incastro”: immagine flottante nel flusso */
+    /* “Incastro”: media flottante nel flusso */
     figure.float-media{
       float: right;
       width: min(44%, 360px);
@@ -219,7 +219,7 @@
       z-index: 50;
       padding: 18px;
     }
-    .modal.open{ display:flex; }
+    .modal.open{display:flex;}
 
     .modal-card{
       width: min(1100px, 100%);
@@ -247,7 +247,7 @@
       color: rgba(255,255,255,.92);
       font-family: var(--sans);
     }
-    .modal-actions{ display:flex; gap: 8px; flex-wrap: wrap; justify-content:flex-end; }
+    .modal-actions{display:flex; gap: 8px; flex-wrap: wrap; justify-content:flex-end;}
     .iconbtn{
       border: 1px solid rgba(255,255,255,.18);
       background: rgba(255,255,255,.08);
@@ -259,7 +259,7 @@
       user-select:none;
       -webkit-tap-highlight-color: transparent;
     }
-    .iconbtn:hover{ background: rgba(255,255,255,.12); }
+    .iconbtn:hover{background: rgba(255,255,255,.12);}
 
     .stage{
       position: relative;
@@ -282,7 +282,7 @@
       box-shadow: 0 14px 40px rgba(0,0,0,.35);
       touch-action: none;
     }
-    .zoomable:active{ cursor: grabbing; }
+    .zoomable:active{cursor: grabbing;}
 
     .pager-hint{
       margin-top: 10px;
@@ -313,7 +313,7 @@
       display: none;
       overflow: hidden;
     }
-    .notes-window.open{ display: grid; grid-template-rows: auto 1fr auto; }
+    .notes-window.open{display: grid; grid-template-rows: auto 1fr auto;}
 
     .notes-top{
       display:flex;
@@ -327,7 +327,7 @@
       user-select:none;
       -webkit-tap-highlight-color: transparent;
     }
-    .notes-top:active{ cursor: grabbing; }
+    .notes-top:active{cursor: grabbing;}
 
     .notes-title{
       display:flex;
@@ -380,7 +380,7 @@
       padding: 10px 12px;
       outline: none;
     }
-    .notes-text::placeholder{ color: rgba(255,255,255,.55); }
+    .notes-text::placeholder{color: rgba(255,255,255,.55);}
 
     .notes-bottom{
       display:flex;
@@ -403,15 +403,15 @@
       vertical-align: middle;
       margin-right: 8px;
     }
-    .status-dot.ok{ background: rgba(57,217,138,.9); }
-    .status-dot.warn{ background: rgba(255,220,60,.9); }
-    .status-dot.err{ background: rgba(255,77,77,.9); }
+    .status-dot.ok{background: rgba(57,217,138,.9);}
+    .status-dot.warn{background: rgba(255,220,60,.9);}
+    .status-dot.err{background: rgba(255,77,77,.9);}
 
     @media (max-width: 980px){
-      .spread.two{ grid-template-columns: 1fr; }
-      figure.float-media{ float:none; width: 100%; margin: 8px 0 14px; }
-      input[type="range"]{ width: 140px; }
-      .notes-window{ right: 14px; bottom: 14px; width: calc(100vw - 28px); }
+      .spread.two{grid-template-columns: 1fr;}
+      figure.float-media{float:none; width: 100%; margin: 8px 0 14px;}
+      input[type="range"]{width: 140px;}
+      .notes-window{right: 14px; bottom: 14px; width: calc(100vw - 28px);}
     }
   </style>
 </head>
@@ -425,7 +425,6 @@
       </div>
 
       <div class="toolbar">
-        <!-- Collegamento index progetto -->
         <a class="btn" href="index.html" title="Torna all’index del progetto">⌂ Index</a>
 
         <button class="btn" id="toggleTwo" aria-pressed="false">↔︎ Vista 2 pagine</button>
@@ -571,7 +570,7 @@
   </div>
 
   <!-- MODAL ZOOM/PAN -->
-  <div class="modal" id="modal" role="dialog" aria-modal="true" see aria-label="Zoom immagine">
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Zoom immagine">
     <div class="modal-card">
       <div class="modal-top">
         <div class="title">Zoom/Pan — immagine navigabile</div>
@@ -828,7 +827,7 @@
     });
 
     let drag = {active:false, startX:0, startY:0, startLeft:0, startTop:0};
-    function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+    function clamp(n, min, max){return Math.max(min, Math.min(max, n));}
 
     notesDrag.addEventListener('pointerdown', (e) => {
       drag.active = true;
