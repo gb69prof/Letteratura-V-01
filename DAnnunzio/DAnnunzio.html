@@ -92,7 +92,6 @@
     }
     input[type="range"]{ width: 160px; }
 
-    /* --- Book layout --- */
     .spread{
       display:grid;
       grid-template-columns: 1fr;
@@ -168,7 +167,6 @@
       font-style: italic;
     }
 
-    /* “Incastro”: media flottante nel flusso */
     figure.float-media{
       float: right;
       width: min(44%, 360px);
@@ -193,7 +191,6 @@
       cursor: pointer;
     }
 
-    /* Video box responsive */
     .video-box{
       margin: 0;
       border-radius: 0;
@@ -208,7 +205,6 @@
       display:block;
     }
 
-    /* Modal zoom/pan */
     .modal{
       position: fixed;
       inset: 0;
@@ -295,9 +291,6 @@
       color: rgba(232,237,245,.75);
     }
 
-    /* =========================
-       Finestra Appunti flottante
-       ========================= */
     .notes-window{
       position: fixed;
       right: 22px;
@@ -425,7 +418,8 @@
       </div>
 
       <div class="toolbar">
-        <a class="btn" href="index.html" title="Torna all’index del progetto">⌂ Index</a>
+        <!-- ✅ LINK CORRETTO: torna al ROOT -->
+        <a class="btn" href="../index.html" title="Torna all’index del progetto">⌂ Index</a>
 
         <button class="btn" id="toggleTwo" aria-pressed="false">↔︎ Vista 2 pagine</button>
 
@@ -454,8 +448,8 @@
               <span>Indice lezioni</span>
             </div>
 
-            <!-- Media 1: immagine che diventa video (stessa area) -->
             <figure class="float-media" id="presentaBox">
+              <!-- ✅ PATH: dentro DAnnunzio/assets -->
               <img class="thumb" id="presentaImg"
                    src="assets/D’Annunzio-presenta-se.jpeg"
                    alt="D’Annunzio si presenta (clicca per aprire il video)" />
@@ -547,6 +541,7 @@
             </div>
 
             <figure class="float-media" style="float:none; width:100%; margin: 6px 0 14px;">
+              <!-- ✅ PATH: dentro DAnnunzio/assets -->
               <img class="thumb" data-zoom="true"
                    src="assets/D’Annunzio-intro.jpeg"
                    alt="Schema: Gli scrittori nei confronti del mondo (clicca per zoom)" />
@@ -569,7 +564,6 @@
     </main>
   </div>
 
-  <!-- MODAL ZOOM/PAN -->
   <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Zoom immagine">
     <div class="modal-card">
       <div class="modal-top">
@@ -587,7 +581,6 @@
     </div>
   </div>
 
-  <!-- FINESTRA APPUNTI -->
   <section class="notes-window" id="notesWin" aria-label="Finestra appunti">
     <div class="notes-top" id="notesDrag">
       <div class="notes-title">
@@ -613,9 +606,6 @@
   </section>
 
   <script>
-    /* =========================
-       Vista 1/2 pagine + font
-       ========================= */
     const spread = document.getElementById('spread');
     const toggleTwo = document.getElementById('toggleTwo');
     let twoPages = false;
@@ -637,9 +627,6 @@
     document.getElementById('prev').addEventListener('click', () => page1.scrollIntoView({behavior:'smooth', block:'start'}));
     document.getElementById('next').addEventListener('click', () => page2.scrollIntoView({behavior:'smooth', block:'start'}));
 
-    /* =========================
-       Zoom/Pan immagini (data-zoom="true")
-       ========================= */
     const modal = document.getElementById('modal');
     const zoomImg = document.getElementById('zoomImg');
     const stage = document.getElementById('stage');
@@ -699,9 +686,6 @@
     zoomImg.addEventListener('pointerup', () => dragging = false);
     zoomImg.addEventListener('pointercancel', () => dragging = false);
 
-    /* =========================
-       D’Annunzio: immagine → video (stessa area)
-       ========================= */
     const presentaImg = document.getElementById('presentaImg');
     const presentaVideo = document.getElementById('presentaVideo');
     if(presentaImg && presentaVideo){
@@ -711,9 +695,6 @@
       });
     }
 
-    /* =========================
-       Finestra Appunti: toggle + drag + autosave + export
-       ========================= */
     const toggleNotes = document.getElementById('toggleNotes');
     const notesWin = document.getElementById('notesWin');
     const notesDrag = document.getElementById('notesDrag');
@@ -734,13 +715,11 @@
       dot.classList.remove('ok','warn','err');
       if(kind) dot.classList.add(kind);
     }
-
     function getTopZ(){
       const z = Number(notesWin.dataset.z || '80') + 1;
       notesWin.dataset.z = String(z);
       return z;
     }
-
     function openNotes(){
       notesWin.classList.add('open');
       toggleNotes.setAttribute('aria-pressed', 'true');
