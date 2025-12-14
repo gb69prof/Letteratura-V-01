@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>D’Annunzio — Introduzione</title>
+
+<style>
+:root{
+  --bg:#0f141a;
+  --paper:#ffffff;
+  --ink:#12161c;
+  --muted:#5b6676;
+  --shadow: 0 14px 40px rgba(0,0,0,.28);
+  --radius: 18px;
+  --accent:#b11212;
+  --serif: ui-serif, Georgia, "Times New Roman", serif;
+  --sans: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas;
+}
+
+html,body{height:100%;}
+body{
+  margin:0;
+  background: var(--bg);
+  color:#e8edf5;
+  font-family: var(--sans);
+}
+
+.app{
+  max-width:1180px;
+  margin:0 auto;
+  padding:18px;
+}
+
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.brand strong{font-size:14px;}
+.brand span{font-size:12px;color:#cbd5e1;}
+
+.toolbar{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.btn{
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.18);
+  color:#fff;
+  padding:8px 12px;
+  border-radius:12px;
+  cursor:pointer;
+  font-size:13px;
+}
+
+.spread{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:16px;
+  margin-top:16px;
+}
+.spread.two{grid-template-columns:1fr 1fr;}
+
+.page{
+  background:var(--paper);
+  color:var(--ink);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  min-height:560px;
+}
+
+.page-inner{
+  padding:32px 34px 38px;
+  font-family:var(--serif);
+  font-size:18px;
+  line-height:1.65;
+}
+
+.page h1{margin-top:0;}
+.meta{
+  font-family:var(--sans);
+  font-size:12px;
+  color:var(--muted);
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:14px;
+}
+
+.page a{color:var(--accent);text-decoration:none;}
+.page a:hover{text-decoration:underline;}
+
+figure.float-media{
+  float:right;
+  width:min(44%,360px);
+  margin:6px 0 12px 14px;
+  border:1px solid rgba(0,0,0,.1);
+  border-radius:14px;
+  overflow:hidden;
+  background:#f8fafc;
+}
+
+figure.float-media figcaption{
+  font-family:var(--sans);
+  font-size:12px;
+  padding:8px 10px;
+  background:#fff;
+  border-top:1px solid rgba(0,0,0,.08);
+}
+
+.thumb{
+  width:100%;
+  display:block;
+  cursor:pointer;
+}
+
+.video-box iframe{
+  width:100%;
+  aspect-ratio:16/9;
+  border:0;
+  display:block;
+}
+
+blockquote{
+  margin:14px 0;
+  padding:10px 12px;
+  border-left:3px solid var(--accent);
+  background:rgba(177,18,18,.06);
+  border-radius:12px;
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.65);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:50;
+}
+.modal.open{display:flex;}
+
+.stage{
+  background:#111;
+  padding:16px;
+  border-radius:16px;
+}
+.stage img{
+  max-width:100%;
+  border-radius:12px;
+}
+
+@media(max-width:980px){
+  .spread.two{grid-template-columns:1fr;}
+  figure.float-media{float:none;width:100%;margin:8px 0 14px;}
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<header>
+  <div class="brand">
+    <strong>D’Annunzio — Lezione</strong>
+    <span>testo vivo · media · schema · appunti</span>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn" id="toggleTwo">Vista 2 pagine</button>
+  </div>
+</header>
+
+<main>
+<div class="spread" id="spread">
+
+<!-- PAGINA 1 -->
+<article class="page">
+<div class="page-inner">
+
+<h1>D’Annunzio — Introduzione</h1>
+
+<div class="meta">
+  <span>Pagina introduttiva</span>
+  <span>Testo selezionabile</span>
+  <span>Media integrati</span>
+</div>
+
+<p style="font-family:var(--sans);font-size:14px;">
+← <a href="../index.html">Torna all’indice generale</a>
+</p>
+
+<figure class="float-media">
+  <img class="thumb" id="presentaImg"
+       src="assets/D’Annunzio-presenta-se.jpeg"
+       alt="D’Annunzio si presenta">
+  <div class="video-box" id="presentaVideo" style="display:none;">
+    <iframe src="https://app.heygen.com/embedded-player/b0e43083779041f48d1adf7fd890398c"
+      allow="encrypted-media; fullscreen;" allowfullscreen></iframe>
+  </div>
+  <figcaption>D’Annunzio si presenta</figcaption>
+</figure>
+
+<h2>Introduzione</h2>
+
+<p>
+L’Europa tra fine Ottocento e inizio Novecento era attraversata da mutamenti profondi:
+la società borghese si stava trasformando in società di massa…
+</p>
+
+<blockquote>
+«Chi ti trarrà dalle laudi della morte verso il bel monte?»
+</blockquote>
+
+<h2>Indice delle lezioni</h2>
+<ul>
+<li><a href="sentimento-base.html">Il sentimento-base</a></li>
+<li><a href="scandali.html">Gli scandali</a></li>
+<li><a href="poetica.html">LA POETICA</a></li>
+<li><a href="estetismo-piacere.html">L’ESTETISMO: Il piacere</a></li>
+<li><a href="superomismo.html">IL SUPEROMISMO</a></li>
+<li><a href="laudi.html">Le Laudi</a></li>
+<li><a href="sera-fiesolana.html">La sera fiesolana</a></li>
+<li><a href="pioggia-nel-pineto.html">La pioggia nel pineto</a></li>
+<li><a href="approfondimento.html">APPROFONDIMENTO</a></li>
+</ul>
+
+</div>
+</article>
+
+<!-- PAGINA 2 -->
+<article class="page">
+<div class="page-inner">
+
+<h1>Schema — scrittori e società di massa</h1>
+
+<figure class="float-media" style="float:none;width:100%;">
+  <img class="thumb" data-zoom
+       src="assets/D’Annunzio-intro.jpeg"
+       alt="Schema D’Annunzio">
+  <figcaption>Schema concettuale</figcaption>
+</figure>
+
+<p>
+Questo schema visualizza la frattura tra società di massa e ideale del bello:
+l’esteta e il superuomo come risposta.
+</p>
+
+</div>
+</article>
+
+</div>
+</main>
+</div>
+
+<div class="modal" id="modal">
+  <div class="stage">
+    <img id="zoomImg">
+  </div>
+</div>
+
+<script>
+const spread=document.getElementById("spread");
+document.getElementById("toggleTwo").onclick=()=>spread.classList.toggle("two");
+
+const img=document.getElementById("presentaImg");
+const vid=document.getElementById("presentaVideo");
+img.onclick=()=>{img.style.display="none";vid.style.display="block";};
+
+const modal=document.getElementById("modal");
+const zoomImg=document.getElementById("zoomImg");
+document.querySelectorAll("img[data-zoom]").forEach(i=>{
+  i.onclick=()=>{zoomImg.src=i.src;modal.classList.add("open");};
+});
+modal.onclick=()=>modal.classList.remove("open");
+</script>
+
+</body>
+</html>
