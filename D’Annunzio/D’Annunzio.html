@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>D’Annunzio – Introduzione</title>
+<style>
+body{margin:0;background:#111;color:#eee;font-family:Georgia,serif}
+.container{max-width:1100px;margin:auto;padding:24px}
+.paper{background:#fff;color:#111;border-radius:16px;padding:32px}
+h1{margin-top:0}
+img{max-width:100%;border-radius:12px;cursor:pointer}
+#video{display:none;margin-top:16px}
+ul{line-height:1.8}
+a{color:#8b0000;text-decoration:none}
+a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="paper">
+    <h1>Gabriele D’Annunzio</h1>
+
+    <img id="cover" src="assets/D’Annunzio-presenta-se.jpeg" alt="D’Annunzio si presenta"/>
+
+    <div id="video">
+      <iframe width="100%" height="420"
+        src="https://app.heygen.com/embedded-player/b0e43083779041f48d1adf7fd890398c"
+        frameborder="0" allow="encrypted-media; fullscreen;" allowfullscreen>
+      </iframe>
+    </div>
+
+    <p>
+    D’Annunzio si colloca nel passaggio critico tra fine Ottocento e primo Novecento, quando la società europea
+    si trasforma in società di massa. L’irruzione della folla, la crisi della borghesia e la minaccia di una
+    perdita del bello diventano per lui problemi centrali. La risposta non è il compromesso, ma l’eccezione:
+    l’esteta prima, il superuomo poi.
+    </p>
+
+    <h2>Indice delle lezioni</h2>
+    <ul>
+      <li><a href="sentimento-base.html">Il sentimento-base</a></li>
+      <li><a href="scandali.html">Gli scandali</a></li>
+      <li><a href="poetica.html">La poetica</a></li>
+      <li><a href="estetismo-piacere.html">L’estetismo: Il piacere</a></li>
+      <li><a href="superomismo.html">Il superomismo</a></li>
+      <li><a href="laudi.html">Le Laudi del cielo, del mare, della terra e degli eroi</a></li>
+      <li><a href="sera-fiesolana.html">La sera fiesolana</a></li>
+      <li><a href="pioggia-pineto.html">La pioggia nel pineto</a></li>
+      <li><a href="approfondimento.html">Approfondimento</a></li>
+    </ul>
+  </div>
+</div>
+
+<script>
+const img = document.getElementById("cover");
+const video = document.getElementById("video");
+img.addEventListener("click", () => {
+  img.style.display = "none";
+  video.style.display = "block";
+});
+</script>
+</body>
+</html>
