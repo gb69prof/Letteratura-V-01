@@ -1,1 +1,514 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Demo eBook Web — impaginazione</title>
+  <style>
+    :root{
+      --bg:#0f141a;
+      --paper:#ffffff;
+      --ink:#12161c;
+      --muted:#5b6676;
+      --shadow: 0 14px 40px rgba(0,0,0,.28);
+      --radius: 18px;
+      --accent:#2b7cff;
+      --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+    html,body{height:100%;}
+    body{
+      margin:0;
+      background: radial-gradient(1100px 800px at 20% 10%, rgba(43,124,255,.18), transparent 60%),
+                  radial-gradient(1100px 800px at 85% 15%, rgba(139,92,246,.18), transparent 55%),
+                  var(--bg);
+      color:#e8edf5;
+      font-family: var(--sans);
+    }
+
+    .app{
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px;
+      box-sizing: border-box;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 14px;
+      min-height: 100%;
+    }
+
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .brand{display:flex; flex-direction:column; line-height:1.1;}
+    .brand strong{font-size:14px;}
+    .brand span{font-size:12px; color: rgba(232,237,245,.72);}
+
+    .toolbar{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content:flex-end;
+    }
+
+    .btn{
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: #f4f7ff;
+      padding: 9px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      font-size: 13px;
+      user-select:none;
+    }
+    .btn:hover{ background: rgba(255,255,255,.10); }
+    .btn[aria-pressed="true"]{
+      background: rgba(43,124,255,.18);
+      border-color: rgba(43,124,255,.35);
+    }
+
+    .pill{
+      display:flex;
+      align-items:center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.14);
+      font-size: 12px;
+    }
+    input[type="range"]{ width: 160px; }
+
+    /* --- Book layout --- */
+    .spread{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+    .spread.two{ grid-template-columns: 1fr 1fr; }
+
+    .page{
+      background: var(--paper);
+      color: var(--ink);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(18,22,28,.08);
+      overflow: hidden;
+      position: relative;
+      min-height: 560px;
+    }
+    .page::before{
+      content:"";
+      position:absolute; inset:0;
+      background: linear-gradient(90deg, rgba(0,0,0,.06), transparent 20%, transparent 80%, rgba(0,0,0,.06));
+      opacity:.22;
+      pointer-events:none;
+    }
+    .page[data-side="left"]::after{
+      content:"";
+      position:absolute; top:0; bottom:0; right:0;
+      width: 26px;
+      background: linear-gradient(90deg, rgba(0,0,0,0), rgba(0,0,0,.12));
+      opacity:.55;
+      pointer-events:none;
+    }
+    .page[data-side="right"]::after{
+      content:"";
+      position:absolute; top:0; bottom:0; left:0;
+      width: 26px;
+      background: linear-gradient(90deg, rgba(0,0,0,.12), rgba(0,0,0,0));
+      opacity:.55;
+      pointer-events:none;
+    }
+
+    .page-inner{
+      padding: 32px 34px 38px;
+      position: relative;
+      z-index: 1;
+      font-family: var(--serif);
+      font-size: 18px;
+      line-height: 1.65;
+    }
+    .page h1{ margin:0 0 10px; font-size: 26px; }
+    .meta{
+      font-family: var(--sans);
+      font-size: 12px;
+      color: var(--muted);
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .page p{ margin: 0 0 14px; }
+
+    .note{
+      font-family: var(--sans);
+      font-size: 13px;
+      line-height: 1.45;
+      color: #1a2430;
+      border-left: 3px solid rgba(43,124,255,.55);
+      background: rgba(43,124,255,.08);
+      padding: 10px 12px;
+      border-radius: 12px;
+      margin: 12px 0 16px;
+    }
+
+    /* “Incastro”: immagine flottante nel flusso */
+    figure.float-media{
+      float: right;
+      width: min(44%, 360px);
+      margin: 6px 0 12px 14px;
+      border: 1px solid rgba(18,22,28,.10);
+      border-radius: 14px;
+      overflow: hidden;
+      background: #f8fafc;
+    }
+    figure.float-media figcaption{
+      font-family: var(--sans);
+      font-size: 12px;
+      color: #394455;
+      padding: 8px 10px;
+      border-top: 1px solid rgba(18,22,28,.08);
+      background: #fff;
+    }
+    .thumb{
+      display:block;
+      width:100%;
+      height:auto;
+      cursor: zoom-in;
+    }
+
+    /* Video box responsive */
+    .video-box{
+      margin: 14px 0 6px;
+      border-radius: 14px;
+      overflow:hidden;
+      border: 1px solid rgba(18,22,28,.10);
+      background:#0b1220;
+    }
+    .video-box iframe{
+      width:100%;
+      aspect-ratio: 16/9;
+      border:0;
+      display:block;
+    }
+
+    /* Modal zoom/pan */
+    .modal{
+      position: fixed;
+      inset: 0;
+      background: rgba(10,12,16,.68);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index: 50;
+      padding: 18px;
+    }
+    .modal.open{ display:flex; }
+
+    .modal-card{
+      width: min(1100px, 100%);
+      height: min(760px, 92vh);
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,.45);
+      backdrop-filter: blur(10px);
+      display:grid;
+      grid-template-rows: auto 1fr;
+    }
+    .modal-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      background: rgba(0,0,0,.25);
+      border-bottom: 1px solid rgba(255,255,255,.12);
+    }
+    .modal-top .title{
+      font-size: 13px;
+      color: rgba(255,255,255,.92);
+      font-family: var(--sans);
+    }
+    .modal-actions{ display:flex; gap: 8px; flex-wrap: wrap; justify-content:flex-end; }
+    .iconbtn{
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.08);
+      color: #fff;
+      border-radius: 12px;
+      padding: 8px 10px;
+      cursor:pointer;
+      font-size: 12px;
+      user-select:none;
+    }
+    .iconbtn:hover{ background: rgba(255,255,255,.12); }
+
+    .stage{
+      position: relative;
+      overflow: hidden;
+      background: rgba(255,255,255,.06);
+    }
+    .zoomable{
+      position:absolute;
+      left:50%; top:50%;
+      transform: translate(-50%,-50%) scale(1);
+      transform-origin: center;
+      cursor: grab;
+      max-width: none;
+      width: 1200px;
+      height: auto;
+      user-select: none;
+      -webkit-user-drag: none;
+      border-radius: 14px;
+      box-shadow: 0 14px 40px rgba(0,0,0,.35);
+    }
+    .zoomable:active{ cursor: grabbing; }
+
+    .pager-hint{
+      margin-top: 10px;
+      display:flex;
+      justify-content:space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-family: var(--sans);
+      font-size: 12px;
+      color: rgba(232,237,245,.75);
+    }
+
+    @media (max-width: 980px){
+      .spread.two{ grid-template-columns: 1fr; }
+      figure.float-media{ float:none; width: 100%; margin: 8px 0 14px; }
+      input[type="range"]{ width: 140px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <header>
+      <div class="brand">
+        <strong>Demo impaginazione — “libro vero”</strong>
+        <span>testo vivo + immagine incastrata + zoom/pan + video embed</span>
+      </div>
+
+      <div class="toolbar">
+        <button class="btn" id="toggleTwo" aria-pressed="false">↔︎ Vista 2 pagine</button>
+
+        <div class="pill" title="Dimensione del testo">
+          A− <input id="font" type="range" min="15" max="24" value="18" /> A+
+        </div>
+
+        <button class="btn" id="prev">◀︎ Pagina 1</button>
+        <button class="btn" id="next">Pagina 2 ▶︎</button>
+      </div>
+    </header>
+
+    <main>
+      <div class="spread" id="spread">
+        <!-- PAGINA 1 -->
+        <article class="page" data-side="left" id="page1" aria-label="Pagina 1">
+          <div class="page-inner">
+            <h1>Pagina 1 — Testo + immagine incastrata</h1>
+            <div class="meta">
+              <span>Oggetto: immagine (zoomabile)</span>
+              <span>Testo: selezionabile</span>
+              <span>Layout: incastro nel flusso</span>
+            </div>
+
+            <figure class="float-media">
+              <img class="thumb" id="thumb"
+                   src="assets/Digitale-purpurea.png"
+                   alt="Schema Digitale Purpurea (clicca per zoom)" />
+              <figcaption><strong>Schema</strong> — clicca per aprire zoom/pan.</figcaption>
+            </figure>
+
+            <p>
+              Questo è un esempio di “libro vero”: il testo resta testo, quindi l’utente può selezionare,
+              copiare, aumentare il corpo, usare strumenti di lettura. L’immagine non è un poster: è un
+              oggetto integrato che si apre quando serve.
+            </p>
+
+            <div class="note">
+              Qui stiamo testando solo l’impaginazione. I contenuti possono essere Pascoli, D’Annunzio o qualunque cosa:
+              il punto è vedere come “regge” la pagina.
+            </div>
+
+            <p>
+              Se vuoi, in questa stessa pagina possiamo incastrare anche l’embed video, ma io preferisco
+              tenerlo nella pagina 2: la lettura respira meglio.
+            </p>
+
+            <p style="font-family:var(--sans); font-size:14px; margin-top:16px;">
+              Suggerimento: prova a selezionare questa frase. Poi clicca l’immagine.
+            </p>
+          </div>
+        </article>
+
+        <!-- PAGINA 2 -->
+        <article class="page" data-side="right" id="page2" aria-label="Pagina 2">
+          <div class="page-inner">
+            <h1>Pagina 2 — Video incorporato</h1>
+            <div class="meta">
+              <span>Oggetto: YouTube embed (responsive)</span>
+              <span>Testo: sempre vivo</span>
+              <span>Uso: LIM / classe</span>
+            </div>
+
+            <p>
+              Questo è il tuo incorporamento YouTube, ma reso “pulito” e adattivo: si ridimensiona bene su LIM e tablet.
+            </p>
+
+            <div class="video-box">
+              <iframe
+                src="https://www.youtube.com/embed/L2ZAAvXPlrs?si=8QeiZ7vY8LTORTBT"
+                title="YouTube video player"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen>
+              </iframe>
+            </div>
+
+            <div class="note">
+              Se più avanti vuoi “libro serio”: indice, capitoli, pagine generate da file JSON e non scritte a mano,
+              lo facciamo. Ma intanto qui si vede già l’estetica e la leggibilità.
+            </div>
+
+            <p>
+              Vuoi effetto gira-pagina realistico? Si può aggiungere, ma prima io metterei a punto:
+              margini, leggibilità, comportamento su iPad.
+            </p>
+          </div>
+        </article>
+      </div>
+
+      <div class="pager-hint">
+        <span>Zoom: rotella · Pan: trascina · Reset: pulsante · Chiudi: Esc</span>
+        <span>GitHub Pages: carica index.html + assets/</span>
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL ZOOM/PAN -->
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Zoom immagine">
+    <div class="modal-card">
+      <div class="modal-top">
+        <div class="title">Zoom/Pan — immagine navigabile</div>
+        <div class="modal-actions">
+          <button class="iconbtn" id="zoomOut">−</button>
+          <button class="iconbtn" id="zoomIn">+</button>
+          <button class="iconbtn" id="reset">Reset</button>
+          <button class="iconbtn" id="close">Chiudi</button>
+        </div>
+      </div>
+      <div class="stage" id="stage">
+        <img id="zoomImg" class="zoomable" alt="Immagine zoomabile" />
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- 1/2 pages toggle
+    const spread = document.getElementById('spread');
+    const toggleTwo = document.getElementById('toggleTwo');
+    let twoPages = false;
+    toggleTwo.addEventListener('click', () => {
+      twoPages = !twoPages;
+      spread.classList.toggle('two', twoPages);
+      toggleTwo.setAttribute('aria-pressed', String(twoPages));
+      toggleTwo.textContent = twoPages ? '↔︎ Vista 1 pagina' : '↔︎ Vista 2 pagine';
+    });
+
+    // --- font size
+    const font = document.getElementById('font');
+    font.addEventListener('input', () => {
+      const px = Number(font.value);
+      document.querySelectorAll('.page-inner').forEach(el => el.style.fontSize = px + 'px');
+    });
+
+    // --- page switching (qui è solo switch visivo: entrambe le pagine restano presenti, ma scrolla comodo)
+    const page1 = document.getElementById('page1');
+    const page2 = document.getElementById('page2');
+    document.getElementById('prev').addEventListener('click', () => {
+      page1.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+    document.getElementById('next').addEventListener('click', () => {
+      page2.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+
+    // --- modal zoom/pan
+    const modal = document.getElementById('modal');
+    const thumb = document.getElementById('thumb');
+    const zoomImg = document.getElementById('zoomImg');
+    const stage = document.getElementById('stage');
+    const closeBtn = document.getElementById('close');
+    const resetBtn = document.getElementById('reset');
+    const zoomInBtn = document.getElementById('zoomIn');
+    const zoomOutBtn = document.getElementById('zoomOut');
+
+    let scale = 1, tx = 0, ty = 0;
+    let dragging = false, startX = 0, startY = 0;
+
+    function applyTransform(){
+      zoomImg.style.transform = `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(${scale})`;
+    }
+    function openModal(src){
+      zoomImg.src = src;
+      scale = 1; tx = 0; ty = 0;
+      applyTransform();
+      modal.classList.add('open');
+      closeBtn.focus();
+    }
+    function closeModal(){
+      modal.classList.remove('open');
+      dragging = false;
+    }
+
+    thumb.addEventListener('click', () => openModal(thumb.src));
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => { if(e.target === modal) closeModal(); });
+
+    resetBtn.addEventListener('click', () => { scale = 1; tx = 0; ty = 0; applyTransform(); });
+    zoomInBtn.addEventListener('click', () => { scale = Math.min(6, +(scale + 0.2).toFixed(2)); applyTransform(); });
+    zoomOutBtn.addEventListener('click', () => { scale = Math.max(0.6, +(scale - 0.2).toFixed(2)); applyTransform(); });
+
+    stage.addEventListener('wheel', (e) => {
+      if(!modal.classList.contains('open')) return;
+      e.preventDefault();
+      const d = Math.sign(e.deltaY);
+      scale = d > 0 ? Math.max(0.6, +(scale - 0.12).toFixed(2)) : Math.min(6, +(scale + 0.12).toFixed(2));
+      applyTransform();
+    }, {passive:false});
+
+    zoomImg.addEventListener('pointerdown', (e) => {
+      dragging = true;
+      startX = e.clientX - tx;
+      startY = e.clientY - ty;
+      zoomImg.setPointerCapture(e.pointerId);
+    });
+    zoomImg.addEventListener('pointermove', (e) => {
+      if(!dragging) return;
+      tx = e.clientX - startX;
+      ty = e.clientY - startY;
+      applyTransform();
+    });
+    zoomImg.addEventListener('pointerup', () => dragging = false);
+    zoomImg.addEventListener('pointercancel', () => dragging = false);
+
+    window.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+    });
+  </script>
+</body>
+</html>
 
