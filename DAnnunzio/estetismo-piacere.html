@@ -1,0 +1,802 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>D’Annunzio — Estetismo</title>
+  <style>
+    :root{
+      --bg:#0f141a;
+      --paper:#ffffff;
+      --ink:#12161c;
+      --muted:#5b6676;
+      --shadow: 0 14px 40px rgba(0,0,0,.28);
+      --radius: 18px;
+      --accent:#b11212;
+      --danger:#ff4d4d;
+      --ok:#39d98a;
+      --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
+      --sans: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    html,body{height:100%;}
+    body{
+      margin:0;
+      background: radial-gradient(1100px 800px at 20% 10%, rgba(177,18,18,.14), transparent 60%),
+                  radial-gradient(1100px 800px at 85% 15%, rgba(43,124,255,.12), transparent 55%),
+                  var(--bg);
+      color:#e8edf5;
+      font-family: var(--sans);
+    }
+
+    .app{
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px;
+      box-sizing: border-box;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 14px;
+      min-height: 100%;
+    }
+
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .brand{display:flex; flex-direction:column; line-height:1.1;}
+    .brand strong{font-size:14px;}
+    .brand span{font-size:12px; color: rgba(232,237,245,.72);}
+
+    .toolbar{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content:flex-end;
+    }
+
+    .btn{
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: #f4f7ff;
+      padding: 9px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      font-size: 13px;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+      text-decoration:none;
+    }
+    .btn:hover{ background: rgba(255,255,255,.10); }
+    .btn[aria-pressed="true"]{
+      background: rgba(43,124,255,.18);
+      border-color: rgba(43,124,255,.35);
+    }
+
+    .pill{
+      display:flex;
+      align-items:center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.14);
+      font-size: 12px;
+    }
+    input[type="range"]{ width: 160px; }
+
+    .spread{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+    .spread.two{grid-template-columns: 1fr 1fr;}
+
+    .page{
+      background:var(--paper);
+      color:var(--ink);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      border: 1px solid rgba(18,22,28,.08);
+      overflow:hidden;
+      position: relative;
+      min-height: 560px;
+    }
+    .page::before{
+      content:"";
+      position:absolute; inset:0;
+      background: linear-gradient(90deg, rgba(0,0,0,.06), transparent 20%, transparent 80%, rgba(0,0,0,.06));
+      opacity:.22;
+      pointer-events:none;
+    }
+    .page[data-side="left"]::after{
+      content:"";
+      position:absolute; top:0; bottom:0; right:0;
+      width: 26px;
+      background: linear-gradient(90deg, rgba(0,0,0,0), rgba(0,0,0,.12));
+      opacity:.55;
+      pointer-events:none;
+    }
+    .page[data-side="right"]::after{
+      content:"";
+      position:absolute; top:0; bottom:0; left:0;
+      width: 26px;
+      background: linear-gradient(90deg, rgba(0,0,0,.12), rgba(0,0,0,0));
+      opacity:.55;
+      pointer-events:none;
+    }
+
+    .page-inner{
+      padding: 32px 34px 38px;
+      position: relative;
+      z-index: 1;
+      font-family: var(--serif);
+      font-size: 18px;
+      line-height: 1.65;
+    }
+    .page h1{margin:0 0 10px; font-size: 26px;}
+    .page h2{margin: 18px 0 10px; font-size: 20px;}
+    .meta{
+      font-family: var(--sans);
+      font-size: 12px;
+      color: var(--muted);
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .page p{margin: 0 0 14px;}
+
+    .page a{color: var(--accent);}
+    .page a:hover{text-decoration: underline;}
+
+    blockquote{
+      margin: 14px 0 16px;
+      padding: 10px 12px;
+      border-left: 3px solid rgba(177,18,18,.55);
+      background: rgba(177,18,18,.07);
+      border-radius: 12px;
+      font-style: italic;
+    }
+
+    figure.float-media{
+      float: right;
+      width: min(44%, 360px);
+      margin: 6px 0 12px 14px;
+      border: 1px solid rgba(18,22,28,.10);
+      border-radius: 14px;
+      overflow: hidden;
+      background: #f8fafc;
+    }
+    figure.float-media figcaption{
+      font-family: var(--sans);
+      font-size: 12px;
+      color: #394455;
+      padding: 8px 10px;
+      border-top: 1px solid rgba(18,22,28,.08);
+      background: #fff;
+    }
+    .thumb{
+      display:block;
+      width:100%;
+      height:auto;
+      cursor: pointer;
+    }
+
+    .video-box{
+      margin: 0;
+      border-radius: 0;
+      overflow:hidden;
+      border: 0;
+      background:#0b1220;
+    }
+    .video-box iframe{
+      width:100%;
+      aspect-ratio: 16/9;
+      border:0;
+      display:block;
+    }
+
+    .modal{
+      position: fixed;
+      inset: 0;
+      background: rgba(10,12,16,.68);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index: 50;
+      padding: 18px;
+    }
+    .modal.open{display:flex;}
+
+    .modal-card{
+      width: min(1100px, 100%);
+      height: min(760px, 92vh);
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,.45);
+      backdrop-filter: blur(10px);
+      display:grid;
+      grid-template-rows: auto 1fr;
+    }
+    .modal-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      background: rgba(0,0,0,.25);
+      border-bottom: 1px solid rgba(255,255,255,.12);
+    }
+    .modal-top .title{
+      font-size: 13px;
+      color: rgba(255,255,255,.92);
+      font-family: var(--sans);
+    }
+    .modal-actions{display:flex; gap: 8px; flex-wrap: wrap; justify-content:flex-end;}
+    .iconbtn{
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.08);
+      color: #fff;
+      border-radius: 12px;
+      padding: 8px 10px;
+      cursor:pointer;
+      font-size: 12px;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .iconbtn:hover{background: rgba(255,255,255,.12);}
+
+    .stage{
+      position: relative;
+      overflow: hidden;
+      background: rgba(255,255,255,.06);
+      touch-action: none;
+    }
+    .zoomable{
+      position:absolute;
+      left:50%; top:50%;
+      transform: translate(-50%,-50%) scale(1);
+      transform-origin: center;
+      cursor: grab;
+      max-width: none;
+      width: 1200px;
+      height: auto;
+      user-select: none;
+      -webkit-user-drag: none;
+      border-radius: 14px;
+      box-shadow: 0 14px 40px rgba(0,0,0,.35);
+      touch-action: none;
+    }
+    .zoomable:active{cursor: grabbing;}
+
+    .pager-hint{
+      margin-top: 10px;
+      display:flex;
+      justify-content:space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-family: var(--sans);
+      font-size: 12px;
+      color: rgba(232,237,245,.75);
+    }
+
+    .notes-window{
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      width: min(520px, calc(100vw - 44px));
+      height: 320px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 18px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.45);
+      backdrop-filter: blur(10px);
+      z-index: 80;
+      display: none;
+      overflow: hidden;
+    }
+    .notes-window.open{display: grid; grid-template-rows: auto 1fr auto;}
+
+    .notes-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      background: rgba(0,0,0,.25);
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      cursor: grab;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .notes-top:active{cursor: grabbing;}
+
+    .notes-title{
+      display:flex;
+      flex-direction:column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .notes-title strong{
+      font-size: 13px;
+      color: rgba(255,255,255,.92);
+      font-family: var(--sans);
+      letter-spacing:.2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .notes-title span{
+      font-size: 11px;
+      color: rgba(255,255,255,.70);
+      font-family: var(--sans);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .notes-actions{
+      display:flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content:flex-end;
+      flex-shrink:0;
+    }
+
+    .notes-body{
+      padding: 10px 12px;
+      background: rgba(255,255,255,.06);
+    }
+    .notes-text{
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      resize: none;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.20);
+      color: rgba(255,255,255,.92);
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.45;
+      padding: 10px 12px;
+      outline: none;
+    }
+    .notes-text::placeholder{color: rgba(255,255,255,.55);}
+
+    .notes-bottom{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border-top: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      font-family: var(--sans);
+      font-size: 12px;
+      color: rgba(255,255,255,.75);
+    }
+    .status-dot{
+      display:inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 99px;
+      background: rgba(255,255,255,.45);
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    .status-dot.ok{background: rgba(57,217,138,.9);}
+    .status-dot.warn{background: rgba(255,220,60,.9);}
+    .status-dot.err{background: rgba(255,77,77,.9);}
+
+    @media (max-width: 980px){
+      .spread.two{grid-template-columns: 1fr;}
+      figure.float-media{float:none; width: 100%; margin: 8px 0 14px;}
+      input[type="range"]{width: 140px;}
+      .notes-window{right: 14px; bottom: 14px; width: calc(100vw - 28px);}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <header>
+      <div class="brand">
+        <strong>D’Annunzio — Estetismo</strong>
+        <span>Libro 02 · una lezione = una pagina HTML</span>
+      </div>
+
+      <div class="toolbar">
+        <!-- ✅ LINK CORRETTO: torna al ROOT -->
+        <a class="btn" href="../index.html" title="Torna all’index del progetto">⌂ Index</a>
+
+        <button class="btn" id="toggleTwo" aria-pressed="false">↔︎ Vista 2 pagine</button>
+
+        <div class="pill" title="Dimensione del testo">
+          A− <input id="font" type="range" min="15" max="24" value="18" /> A+
+        </div>
+
+        <button class="btn" id="prev">◀︎ Pagina 1</button>
+        <button class="btn" id="next">Pagina 2 ▶︎</button>
+
+        <button class="btn" id="toggleNotes" aria-pressed="false" title="Apri/chiudi appunti">
+          📝 Appunti
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <div class="spread" id="spread">
+        <!-- PAGINA 1 -->
+        <article class="page" data-side="left" id="page1" aria-label="Pagina 1">
+          <div class="page-inner">
+            <h1>D’Annunzio Esteta</h1>
+            <div class="meta">
+              <span>Arte = vita</span>
+              <span>Vita inimitabile</span>
+              <span>Il Piacere</span>
+            </div>
+
+            <figure class="float-media">
+              <img class="thumb" data-zoom="true"
+                   src="assets/esteta.png"
+                   alt="D’Annunzio esteta: arte come vita (clicca per zoom)" />
+              <figcaption><strong>D’Annunzio esteta</strong> — arte come vita e vita come opera d’arte.</figcaption>
+            </figure>
+
+            <p>
+              L’Arte come Vita e la Vita come Opera d’Arte: Dopo aver esaminato l’estetismo in generale, possiamo approfondire l’estetismo dannunziano, che rappresenta una delle espressioni più compiute e complesse di questo movimento in Italia. Gabriele D'Annunzio non si limitò ad abbracciare i principi dell'estetismo come filosofo o scrittore, ma li applicò in modo radicale alla sua stessa vita, cercando di incarnare l'ideale dell'esteta in ogni aspetto della propria esistenza. D’Annunzio e l’Estetismo. Un Culto Totale della Bellezza: Per D'Annunzio, l'estetismo non era solo una corrente letteraria o una teoria filosofica, ma una filosofia di vita. Come gli altri esteti, D'Annunzio credeva che la bellezza fosse il valore supremo, ma, diversamente da molti, non si accontentava di creare arte: desiderava che ogni momento della sua vita fosse trasformato in un'opera d'arte. Da qui nasce il concetto di "vita inimitabile", un’esistenza vissuta al massimo, senza alcuna limitazione morale, sociale o politica, dove ogni esperienza veniva sublimata in un’esperienza estetica. D'Annunzio riteneva che il vero artista non fosse confinato al mondo delle parole o delle immagini, ma dovesse far coincidere arte e vita, eliminando i confini tra creazione artistica e vissuto quotidiano. Ogni azione del poeta, ogni gesto pubblico o privato, doveva rispecchiare l’ideale estetico, trasformando la sua intera esistenza in una rappresentazione. Il Piacere - L’Estetismo nella Narrativa Dannunziana: Uno dei migliori esempi dell’estetismo dannunziano si trova nel suo romanzo Il Piacere (1889). Il protagonista, Andrea Sperelli, è il perfetto rappresentante dell’esteta dannunziano: un aristocratico raffinato, un artista che vive solo per il bello e per il piacere, cercando costantemente di fare della propria vita un'opera d'arte. Tuttavia, la ricerca sfrenata del piacere estetico conduce Andrea all'isolamento e alla decadenza morale. Attraverso di lui, D'Annunzio descrive un mondo in cui la bellezza, pur essendo elevata a valore assoluto, finisce per generare vuoto e insoddisfazione. Il romanzo rivela non solo l’esaltazione dell’estetica, ma anche la crisi dell’estetismo stesso: Andrea Sperelli, nonostante il culto del bello, si rivela incapace di trovare una vera felicità o un equilibrio interiore. Questa tensione tra l'esaltazione della bellezza e la consapevolezza della sua insufficienza caratterizza gran parte della produzione dannunziana. La Parola come Strumento di Seduzione Estetica: Uno degli strumenti principali attraverso i quali D’Annunzio costruisce la sua figura di esteta è il linguaggio. Nella sua scrittura, la parola non è solo un mezzo di comunicazione, ma un vero e proprio strumento estetico. Le sue frasi sono ricche, raffinate, intrise di musicalità e sensualità. La parola, per D'Annunzio, diventa un’esperienza sensoriale, capace di sedurre il lettore non solo con il significato, ma con il suono e il ritmo. Questo uso sapiente della parola riflette la centralità della bellezza formale nella sua poetica, in linea con il principio dell’arte per l’arte. D’Annunzio non scriveva per educare o trasmettere valori morali: come gli esteti, credeva che l’arte dovesse essere goduta per il suo valore estetico. Nei suoi testi, l’elemento sensuale e la raffinatezza formale predominano, facendo sì che il lettore sia colpito dalla bellezza del linguaggio, prima ancora che dal contenuto. Questo è evidente non solo nei suoi romanzi, ma anche nelle sue poesie, dove il suono e l'immagine giocano un ruolo cruciale. L’Estetismo come Rifiuto della Modernità e della Società di Massa: Come per gli altri esteti, anche per D’Annunzio la modernità rappresentava un pericolo per l’artista. Il progresso tecnologico, la società di massa e la democratizzazione politica erano visti come fenomeni che minacciavano la bellezza e la purezza dell'arte. D’Annunzio disprezzava la borghesia e la sua ossessione per l’utile e il denaro, e vedeva nella società moderna una forza distruttrice che annullava il valore dell’arte e dell’estetica. In questo contesto, la figura dell'esteta assume anche una dimensione eroica e tragica: l’artista è costretto a vivere in un mondo che non comprende più la bellezza, dove il volgo e la massa regnano sovrani. La soluzione dannunziana a questo conflitto fu quella di ritirarsi in un mondo di bellezza ideale e aristocratica, lontano dalla volgarità della vita quotidiana. Conclusione - L’Estetismo di D’Annunzio come Sintesi di Arte e Vita: In definitiva, l’estetismo di D’Annunzio rappresenta una sintesi estrema e radicale dei principi dell’estetismo europeo. Il poeta non solo esalta la bellezza come valore supremo, ma trasforma la sua stessa esistenza in un'opera d'arte, cercando costantemente di vivere secondo i principi che esprimeva nelle sue opere. La vita e l’arte, per D'Annunzio, diventano indistinguibili, fuse in un unico ideale estetico che, nonostante i suoi limiti e le sue contraddizioni, ha segnato profondamente la letteratura e la cultura italiana del Novecento.
+            </p>
+</div>
+        </article>
+
+        <!-- PAGINA 2 -->
+        <article class="page" data-side="right" id="page2" aria-label="Pagina 2">
+          <div class="page-inner">
+            <h1>Sintesi visiva</h1>
+            <div class="meta">
+              <span>Bellezza valore supremo</span>
+              <span>Parola seduzione</span>
+              <span>Crisi del piacere</span>
+            </div>
+
+            <figure class="float-media" style="float:none; width:100%; margin: 6px 0 14px;">
+              <img class="thumb" data-zoom="true"
+                   src="assets/esteta.png"
+                   alt="Schema: D’Annunzio esteta (clicca per zoom)" />
+              <figcaption><strong>Schema</strong> — clicca per zoom/pan.</figcaption>
+            </figure>
+
+            <h2>Tre idee-chiave da ricordare</h2>
+            <ul>
+              <li><strong>Arte e vita coincidono</strong>: l’esteta non “scrive soltanto”, <em>si mette in scena</em>.</li>
+              <li><strong>La parola è strumento estetico</strong>: musica, sensualità, seduzione prima del “messaggio”.</li>
+              <li><strong>Il piacere porta alla crisi</strong>: nel romanzo <em>Il Piacere</em>, la ricerca sfrenata genera vuoto e decadenza.</li>
+            </ul>
+
+            <div class="note">
+              Non è una morale. È una diagnosi: quando la bellezza diventa assoluto, tutto il resto si svuota.
+              È qui che l’estetismo, mentre brilla, inizia anche a consumarsi.
+            </div>
+</div>
+        </article>
+      </div>
+
+      <div class="pager-hint">
+        <span>Zoom: rotella · Pan: trascina · Reset: pulsante · Chiudi zoom: Esc</span>
+        <span>Appunti: trascina la barra · Autosave + Export .txt</span>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Zoom immagine">
+    <div class="modal-card">
+      <div class="modal-top">
+        <div class="title">Zoom/Pan — immagine navigabile</div>
+        <div class="modal-actions">
+          <button class="iconbtn" id="zoomOut">−</button>
+          <button class="iconbtn" id="zoomIn">+</button>
+          <button class="iconbtn" id="resetZoom">Reset</button>
+          <button class="iconbtn" id="closeZoom">Chiudi</button>
+        </div>
+      </div>
+      <div class="stage" id="stage">
+        <img id="zoomImg" class="zoomable" alt="Immagine zoomabile" />
+      </div>
+    </div>
+  </div>
+
+  <section class="notes-window" id="notesWin" aria-label="Finestra appunti">
+    <div class="notes-top" id="notesDrag">
+      <div class="notes-title">
+        <strong>Appunti</strong>
+        <span id="notesSub">Salvataggio automatico per questa lezione</span>
+      </div>
+      <div class="notes-actions">
+        <button class="iconbtn" id="exportTxt" title="Esporta appunti in .txt">Export .txt</button>
+        <button class="iconbtn" id="clearNotes" title="Svuota appunti">Svuota</button>
+        <button class="iconbtn" id="closeNotes" title="Chiudi">Chiudi</button>
+      </div>
+    </div>
+
+    <div class="notes-body">
+      <textarea class="notes-text" id="notesText"
+        placeholder="Scrivi qui i tuoi appunti… (si salvano da soli)"></textarea>
+    </div>
+
+    <div class="notes-bottom">
+      <div><span class="status-dot" id="dot"></span><span id="status">Pronto</span></div>
+      <div id="counter">0 caratteri</div>
+    </div>
+  </section>
+
+  <script>
+    const spread = document.getElementById('spread');
+    const toggleTwo = document.getElementById('toggleTwo');
+    let twoPages = false;
+    toggleTwo.addEventListener('click', () => {
+      twoPages = !twoPages;
+      spread.classList.toggle('two', twoPages);
+      toggleTwo.setAttribute('aria-pressed', String(twoPages));
+      toggleTwo.textContent = twoPages ? '↔︎ Vista 1 pagina' : '↔︎ Vista 2 pagine';
+    });
+
+    const font = document.getElementById('font');
+    font.addEventListener('input', () => {
+      const px = Number(font.value);
+      document.querySelectorAll('.page-inner').forEach(el => el.style.fontSize = px + 'px');
+    });
+
+    const page1 = document.getElementById('page1');
+    const page2 = document.getElementById('page2');
+    document.getElementById('prev').addEventListener('click', () => page1.scrollIntoView({behavior:'smooth', block:'start'}));
+    document.getElementById('next').addEventListener('click', () => page2.scrollIntoView({behavior:'smooth', block:'start'}));
+
+    const modal = document.getElementById('modal');
+    const zoomImg = document.getElementById('zoomImg');
+    const stage = document.getElementById('stage');
+    const closeZoom = document.getElementById('closeZoom');
+    const resetZoom = document.getElementById('resetZoom');
+    const zoomIn = document.getElementById('zoomIn');
+    const zoomOut = document.getElementById('zoomOut');
+
+    const zoomThumbs = Array.from(document.querySelectorAll('img.thumb[data-zoom="true"]'));
+
+    let scale = 1, tx = 0, ty = 0;
+    let dragging = false, startX = 0, startY = 0;
+
+    function applyTransform(){
+      zoomImg.style.transform = `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(${scale})`;
+    }
+    function openZoom(src){
+      zoomImg.src = src;
+      scale = 1; tx = 0; ty = 0;
+      applyTransform();
+      modal.classList.add('open');
+      closeZoom.focus();
+    }
+    function closeZoomModal(){
+      modal.classList.remove('open');
+      dragging = false;
+    }
+
+    zoomThumbs.forEach(t => t.addEventListener('click', () => openZoom(t.src)));
+    closeZoom.addEventListener('click', closeZoomModal);
+    modal.addEventListener('click', (e) => { if(e.target === modal) closeZoomModal(); });
+
+    resetZoom.addEventListener('click', () => { scale = 1; tx = 0; ty = 0; applyTransform(); });
+    zoomIn.addEventListener('click', () => { scale = Math.min(6, +(scale + 0.2).toFixed(2)); applyTransform(); });
+    zoomOut.addEventListener('click', () => { scale = Math.max(0.6, +(scale - 0.2).toFixed(2)); applyTransform(); });
+
+    stage.addEventListener('wheel', (e) => {
+      if(!modal.classList.contains('open')) return;
+      e.preventDefault();
+      const d = Math.sign(e.deltaY);
+      scale = d > 0 ? Math.max(0.6, +(scale - 0.12).toFixed(2)) : Math.min(6, +(scale + 0.12).toFixed(2));
+      applyTransform();
+    }, {passive:false});
+
+    zoomImg.addEventListener('pointerdown', (e) => {
+      dragging = true;
+      startX = e.clientX - tx;
+      startY = e.clientY - ty;
+      zoomImg.setPointerCapture(e.pointerId);
+    });
+    zoomImg.addEventListener('pointermove', (e) => {
+      if(!dragging) return;
+      tx = e.clientX - startX;
+      ty = e.clientY - startY;
+      applyTransform();
+    });
+    zoomImg.addEventListener('pointerup', () => dragging = false);
+    zoomImg.addEventListener('pointercancel', () => dragging = false);
+
+    const presentaImg = document.getElementById('presentaImg');
+    const presentaVideo = document.getElementById('presentaVideo');
+    if(presentaImg && presentaVideo){
+      presentaImg.addEventListener('click', () => {
+        presentaImg.style.display = 'none';
+        presentaVideo.style.display = 'block';
+      });
+    }
+
+    const toggleNotes = document.getElementById('toggleNotes');
+    const notesWin = document.getElementById('notesWin');
+    const notesDrag = document.getElementById('notesDrag');
+    const notesText = document.getElementById('notesText');
+    const closeNotes = document.getElementById('closeNotes');
+    const exportTxt = document.getElementById('exportTxt');
+    const clearNotes = document.getElementById('clearNotes');
+    const statusEl = document.getElementById('status');
+    const dot = document.getElementById('dot');
+    const counter = document.getElementById('counter');
+    const notesSub = document.getElementById('notesSub');
+
+    const NOTES_KEY = `mw_notes::${location.pathname}`;
+    const POS_KEY   = `mw_notes_pos::${location.pathname}`;
+
+    function setStatus(kind, text){
+      statusEl.textContent = text;
+      dot.classList.remove('ok','warn','err');
+      if(kind) dot.classList.add(kind);
+    }
+    function getTopZ(){
+      const z = Number(notesWin.dataset.z || '80') + 1;
+      notesWin.dataset.z = String(z);
+      return z;
+    }
+    function openNotes(){
+      notesWin.classList.add('open');
+      toggleNotes.setAttribute('aria-pressed', 'true');
+      notesWin.style.zIndex = String(getTopZ());
+      notesText.focus();
+    }
+    function closeNotesWin(){
+      notesWin.classList.remove('open');
+      toggleNotes.setAttribute('aria-pressed', 'false');
+    }
+
+    toggleNotes.addEventListener('click', () => {
+      const open = notesWin.classList.contains('open');
+      open ? closeNotesWin() : openNotes();
+    });
+    closeNotes.addEventListener('click', closeNotesWin);
+
+    const saved = localStorage.getItem(NOTES_KEY);
+    if(saved !== null) {
+      notesText.value = saved;
+      setStatus('ok','Recuperati');
+    } else {
+      setStatus(null,'Pronto');
+    }
+
+    const savedPos = localStorage.getItem(POS_KEY);
+    if(savedPos){
+      try{
+        const p = JSON.parse(savedPos);
+        if(typeof p.left === 'number') notesWin.style.left = p.left + 'px';
+        if(typeof p.top === 'number')  notesWin.style.top  = p.top  + 'px';
+        notesWin.style.right = 'auto';
+        notesWin.style.bottom = 'auto';
+      }catch{}
+    }
+
+    notesSub.textContent = `Lezione: ${location.pathname.split('/').pop() || 'index.html'}`;
+
+    let saveTimer = null;
+    function scheduleSave(){
+      setStatus('warn','Scrivendo…');
+      if(saveTimer) clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => {
+        try{
+          localStorage.setItem(NOTES_KEY, notesText.value);
+          setStatus('ok','Salvati');
+        }catch(e){
+          setStatus('err','Errore salvataggio');
+        }
+      }, 350);
+    }
+
+    function updateCounter(){
+      counter.textContent = `${notesText.value.length} caratteri`;
+    }
+    updateCounter();
+
+    notesText.addEventListener('input', () => {
+      updateCounter();
+      scheduleSave();
+    });
+
+    exportTxt.addEventListener('click', () => {
+      const blob = new Blob([notesText.value], {type: 'text/plain;charset=utf-8'});
+      const a = document.createElement('a');
+      const lessonName = (location.pathname.split('/').pop() || 'lezione').replace('.html','');
+      const stamp = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+      a.href = URL.createObjectURL(blob);
+      a.download = `${lessonName}-appunti-${stamp}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        URL.revokeObjectURL(a.href);
+        a.remove();
+      }, 0);
+    });
+
+    clearNotes.addEventListener('click', () => {
+      notesText.value = '';
+      updateCounter();
+      localStorage.setItem(NOTES_KEY, '');
+      setStatus('ok','Svuotati');
+      notesText.focus();
+    });
+
+    let drag = {active:false, startX:0, startY:0, startLeft:0, startTop:0};
+    function clamp(n, min, max){return Math.max(min, Math.min(max, n));}
+
+    notesDrag.addEventListener('pointerdown', (e) => {
+      drag.active = true;
+      notesWin.style.zIndex = String(getTopZ());
+      notesDrag.setPointerCapture(e.pointerId);
+
+      const rect = notesWin.getBoundingClientRect();
+      drag.startX = e.clientX;
+      drag.startY = e.clientY;
+      drag.startLeft = rect.left;
+      drag.startTop = rect.top;
+
+      notesWin.style.left = rect.left + 'px';
+      notesWin.style.top = rect.top + 'px';
+      notesWin.style.right = 'auto';
+      notesWin.style.bottom = 'auto';
+    });
+
+    notesDrag.addEventListener('pointermove', (e) => {
+      if(!drag.active) return;
+      const dx = e.clientX - drag.startX;
+      const dy = e.clientY - drag.startY;
+
+      const rect = notesWin.getBoundingClientRect();
+      const w = rect.width, h = rect.height;
+
+      const maxLeft = window.innerWidth - w - 8;
+      const maxTop  = window.innerHeight - h - 8;
+
+      const left = clamp(drag.startLeft + dx, 8, maxLeft);
+      const top  = clamp(drag.startTop + dy, 8, maxTop);
+
+      notesWin.style.left = left + 'px';
+      notesWin.style.top = top + 'px';
+    });
+
+    notesDrag.addEventListener('pointerup', () => {
+      if(!drag.active) return;
+      drag.active = false;
+      const rect = notesWin.getBoundingClientRect();
+      localStorage.setItem(POS_KEY, JSON.stringify({left: rect.left, top: rect.top}));
+    });
+    notesDrag.addEventListener('pointercancel', () => drag.active = false);
+
+    window.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape' && modal.classList.contains('open')) closeZoomModal();
+      const isMac = navigator.platform.toLowerCase().includes('mac');
+      const cmd = isMac ? e.metaKey : e.ctrlKey;
+      if(cmd && (e.key.toLowerCase() === 'k')){
+        e.preventDefault();
+        const open = notesWin.classList.contains('open');
+        open ? closeNotesWin() : openNotes();
+      }
+    });
+  </script>
+</body>
+</html>
