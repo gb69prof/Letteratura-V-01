@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Demo eBook Web — impaginazione</title>
+  <title>Lezione — Format eBook web + Appunti</title>
   <style>
     :root{
       --bg:#0f141a;
@@ -13,8 +13,11 @@
       --shadow: 0 14px 40px rgba(0,0,0,.28);
       --radius: 18px;
       --accent:#2b7cff;
+      --danger:#ff4d4d;
+      --ok:#39d98a;
       --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     }
     html,body{height:100%;}
     body{
@@ -68,6 +71,7 @@
       gap: 8px;
       font-size: 13px;
       user-select:none;
+      -webkit-tap-highlight-color: transparent;
     }
     .btn:hover{ background: rgba(255,255,255,.10); }
     .btn[aria-pressed="true"]{
@@ -251,6 +255,7 @@
       cursor:pointer;
       font-size: 12px;
       user-select:none;
+      -webkit-tap-highlight-color: transparent;
     }
     .iconbtn:hover{ background: rgba(255,255,255,.12); }
 
@@ -258,6 +263,7 @@
       position: relative;
       overflow: hidden;
       background: rgba(255,255,255,.06);
+      touch-action: none;
     }
     .zoomable{
       position:absolute;
@@ -272,6 +278,7 @@
       -webkit-user-drag: none;
       border-radius: 14px;
       box-shadow: 0 14px 40px rgba(0,0,0,.35);
+      touch-action: none;
     }
     .zoomable:active{ cursor: grabbing; }
 
@@ -286,10 +293,123 @@
       color: rgba(232,237,245,.75);
     }
 
+    /* =========================
+       Finestra Appunti flottante
+       ========================= */
+    .notes-window{
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      width: min(520px, calc(100vw - 44px));
+      height: 320px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 18px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.45);
+      backdrop-filter: blur(10px);
+      z-index: 80;
+      display: none;
+      overflow: hidden;
+    }
+    .notes-window.open{ display: grid; grid-template-rows: auto 1fr auto; }
+
+    .notes-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      background: rgba(0,0,0,.25);
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      cursor: grab;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .notes-top:active{ cursor: grabbing; }
+
+    .notes-title{
+      display:flex;
+      flex-direction:column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .notes-title strong{
+      font-size: 13px;
+      color: rgba(255,255,255,.92);
+      font-family: var(--sans);
+      letter-spacing:.2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .notes-title span{
+      font-size: 11px;
+      color: rgba(255,255,255,.70);
+      font-family: var(--sans);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .notes-actions{
+      display:flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content:flex-end;
+      flex-shrink:0;
+    }
+
+    .notes-body{
+      padding: 10px 12px;
+      background: rgba(255,255,255,.06);
+    }
+    .notes-text{
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      resize: none;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.20);
+      color: rgba(255,255,255,.92);
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.45;
+      padding: 10px 12px;
+      outline: none;
+    }
+    .notes-text::placeholder{ color: rgba(255,255,255,.55); }
+
+    .notes-bottom{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border-top: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      font-family: var(--sans);
+      font-size: 12px;
+      color: rgba(255,255,255,.75);
+    }
+    .status-dot{
+      display:inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 99px;
+      background: rgba(255,255,255,.45);
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    .status-dot.ok{ background: rgba(57,217,138,.9); }
+    .status-dot.warn{ background: rgba(255,220,60,.9); }
+    .status-dot.err{ background: rgba(255,77,77,.9); }
+
     @media (max-width: 980px){
       .spread.two{ grid-template-columns: 1fr; }
       figure.float-media{ float:none; width: 100%; margin: 8px 0 14px; }
       input[type="range"]{ width: 140px; }
+      .notes-window{ right: 14px; bottom: 14px; width: calc(100vw - 28px); }
     }
   </style>
 </head>
@@ -298,8 +418,8 @@
   <div class="app">
     <header>
       <div class="brand">
-        <strong>Demo impaginazione — “libro vero”</strong>
-        <span>testo vivo + immagine incastrata + zoom/pan + video embed</span>
+        <strong>Lezione — Format eBook web</strong>
+        <span>testo vivo + incastri + zoom/pan + embed + finestra appunti</span>
       </div>
 
       <div class="toolbar">
@@ -311,6 +431,10 @@
 
         <button class="btn" id="prev">◀︎ Pagina 1</button>
         <button class="btn" id="next">Pagina 2 ▶︎</button>
+
+        <button class="btn" id="toggleNotes" aria-pressed="false" title="Apri/chiudi appunti">
+          📝 Appunti
+        </button>
       </div>
     </header>
 
@@ -323,34 +447,28 @@
             <div class="meta">
               <span>Oggetto: immagine (zoomabile)</span>
               <span>Testo: selezionabile</span>
-              <span>Layout: incastro nel flusso</span>
+              <span>Lezione: un file HTML</span>
             </div>
 
             <figure class="float-media">
               <img class="thumb" id="thumb"
                    src="assets/Digitale-purpurea.png"
                    alt="Schema Digitale Purpurea (clicca per zoom)" />
-              <figcaption><strong>Schema</strong> — clicca per aprire zoom/pan.</figcaption>
+              <figcaption><strong>Schema</strong> — clicca per zoom/pan.</figcaption>
             </figure>
 
             <p>
-              Questo è un esempio di “libro vero”: il testo resta testo, quindi l’utente può selezionare,
-              copiare, aumentare il corpo, usare strumenti di lettura. L’immagine non è un poster: è un
-              oggetto integrato che si apre quando serve.
+              Questo è un format: tu cambi i contenuti (testo, immagini, embed), ma il telaio resta lo stesso.
+              E soprattutto: il testo rimane testo, quindi l’utente può lavorarci davvero.
             </p>
 
             <div class="note">
-              Qui stiamo testando solo l’impaginazione. I contenuti possono essere Pascoli, D’Annunzio o qualunque cosa:
-              il punto è vedere come “regge” la pagina.
+              Apri <strong>Appunti</strong>: compare una finestra spostabile dove puoi scrivere e salvare.
+              Gli appunti restano legati a <em>questa specifica lezione</em> (questo file HTML).
             </div>
 
             <p>
-              Se vuoi, in questa stessa pagina possiamo incastrare anche l’embed video, ma io preferisco
-              tenerlo nella pagina 2: la lettura respira meglio.
-            </p>
-
-            <p style="font-family:var(--sans); font-size:14px; margin-top:16px;">
-              Suggerimento: prova a selezionare questa frase. Poi clicca l’immagine.
+              Prova: seleziona una frase, poi clicca l’immagine per lo zoom, poi apri gli appunti e scrivi.
             </p>
           </div>
         </article>
@@ -361,12 +479,12 @@
             <h1>Pagina 2 — Video incorporato</h1>
             <div class="meta">
               <span>Oggetto: YouTube embed (responsive)</span>
-              <span>Testo: sempre vivo</span>
-              <span>Uso: LIM / classe</span>
+              <span>Layout: pulito per LIM</span>
+              <span>Formato: riutilizzabile</span>
             </div>
 
             <p>
-              Questo è il tuo incorporamento YouTube, ma reso “pulito” e adattivo: si ridimensiona bene su LIM e tablet.
+              Qui c’è il tuo embed YouTube, sistemato in modo adattivo.
             </p>
 
             <div class="video-box">
@@ -380,21 +498,16 @@
             </div>
 
             <div class="note">
-              Se più avanti vuoi “libro serio”: indice, capitoli, pagine generate da file JSON e non scritte a mano,
-              lo facciamo. Ma intanto qui si vede già l’estetica e la leggibilità.
+              Quando faremo le lezioni vere: qui puoi mettere “spiegazione + video + domande”.
+              E negli appunti lo studente si costruisce il suo quaderno.
             </div>
-
-            <p>
-              Vuoi effetto gira-pagina realistico? Si può aggiungere, ma prima io metterei a punto:
-              margini, leggibilità, comportamento su iPad.
-            </p>
           </div>
         </article>
       </div>
 
       <div class="pager-hint">
-        <span>Zoom: rotella · Pan: trascina · Reset: pulsante · Chiudi: Esc</span>
-        <span>GitHub Pages: carica index.html + assets/</span>
+        <span>Zoom: rotella · Pan: trascina · Reset: pulsante · Chiudi zoom: Esc</span>
+        <span>Appunti: trascina la barra in alto · Autosave + Export .txt</span>
       </div>
     </main>
   </div>
@@ -407,8 +520,8 @@
         <div class="modal-actions">
           <button class="iconbtn" id="zoomOut">−</button>
           <button class="iconbtn" id="zoomIn">+</button>
-          <button class="iconbtn" id="reset">Reset</button>
-          <button class="iconbtn" id="close">Chiudi</button>
+          <button class="iconbtn" id="resetZoom">Reset</button>
+          <button class="iconbtn" id="closeZoom">Chiudi</button>
         </div>
       </div>
       <div class="stage" id="stage">
@@ -417,8 +530,35 @@
     </div>
   </div>
 
+  <!-- FINESTRA APPUNTI -->
+  <section class="notes-window" id="notesWin" aria-label="Finestra appunti">
+    <div class="notes-top" id="notesDrag">
+      <div class="notes-title">
+        <strong>Appunti</strong>
+        <span id="notesSub">Salvataggio automatico per questa lezione</span>
+      </div>
+      <div class="notes-actions">
+        <button class="iconbtn" id="exportTxt" title="Esporta appunti in .txt">Export .txt</button>
+        <button class="iconbtn" id="clearNotes" title="Svuota appunti">Svuota</button>
+        <button class="iconbtn" id="closeNotes" title="Chiudi">Chiudi</button>
+      </div>
+    </div>
+
+    <div class="notes-body">
+      <textarea class="notes-text" id="notesText"
+        placeholder="Scrivi qui i tuoi appunti… (si salvano da soli)"></textarea>
+    </div>
+
+    <div class="notes-bottom">
+      <div><span class="status-dot" id="dot"></span><span id="status">Pronto</span></div>
+      <div id="counter">0 caratteri</div>
+    </div>
+  </section>
+
   <script>
-    // --- 1/2 pages toggle
+    /* =========================
+       Vista 1/2 pagine + font
+       ========================= */
     const spread = document.getElementById('spread');
     const toggleTwo = document.getElementById('toggleTwo');
     let twoPages = false;
@@ -429,32 +569,28 @@
       toggleTwo.textContent = twoPages ? '↔︎ Vista 1 pagina' : '↔︎ Vista 2 pagine';
     });
 
-    // --- font size
     const font = document.getElementById('font');
     font.addEventListener('input', () => {
       const px = Number(font.value);
       document.querySelectorAll('.page-inner').forEach(el => el.style.fontSize = px + 'px');
     });
 
-    // --- page switching (qui è solo switch visivo: entrambe le pagine restano presenti, ma scrolla comodo)
     const page1 = document.getElementById('page1');
     const page2 = document.getElementById('page2');
-    document.getElementById('prev').addEventListener('click', () => {
-      page1.scrollIntoView({behavior:'smooth', block:'start'});
-    });
-    document.getElementById('next').addEventListener('click', () => {
-      page2.scrollIntoView({behavior:'smooth', block:'start'});
-    });
+    document.getElementById('prev').addEventListener('click', () => page1.scrollIntoView({behavior:'smooth', block:'start'}));
+    document.getElementById('next').addEventListener('click', () => page2.scrollIntoView({behavior:'smooth', block:'start'}));
 
-    // --- modal zoom/pan
+    /* =========================
+       Zoom/Pan immagine
+       ========================= */
     const modal = document.getElementById('modal');
     const thumb = document.getElementById('thumb');
     const zoomImg = document.getElementById('zoomImg');
     const stage = document.getElementById('stage');
-    const closeBtn = document.getElementById('close');
-    const resetBtn = document.getElementById('reset');
-    const zoomInBtn = document.getElementById('zoomIn');
-    const zoomOutBtn = document.getElementById('zoomOut');
+    const closeZoom = document.getElementById('closeZoom');
+    const resetZoom = document.getElementById('resetZoom');
+    const zoomIn = document.getElementById('zoomIn');
+    const zoomOut = document.getElementById('zoomOut');
 
     let scale = 1, tx = 0, ty = 0;
     let dragging = false, startX = 0, startY = 0;
@@ -462,25 +598,25 @@
     function applyTransform(){
       zoomImg.style.transform = `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(${scale})`;
     }
-    function openModal(src){
+    function openZoom(src){
       zoomImg.src = src;
       scale = 1; tx = 0; ty = 0;
       applyTransform();
       modal.classList.add('open');
-      closeBtn.focus();
+      closeZoom.focus();
     }
-    function closeModal(){
+    function closeZoomModal(){
       modal.classList.remove('open');
       dragging = false;
     }
 
-    thumb.addEventListener('click', () => openModal(thumb.src));
-    closeBtn.addEventListener('click', closeModal);
-    modal.addEventListener('click', (e) => { if(e.target === modal) closeModal(); });
+    thumb.addEventListener('click', () => openZoom(thumb.src));
+    closeZoom.addEventListener('click', closeZoomModal);
+    modal.addEventListener('click', (e) => { if(e.target === modal) closeZoomModal(); });
 
-    resetBtn.addEventListener('click', () => { scale = 1; tx = 0; ty = 0; applyTransform(); });
-    zoomInBtn.addEventListener('click', () => { scale = Math.min(6, +(scale + 0.2).toFixed(2)); applyTransform(); });
-    zoomOutBtn.addEventListener('click', () => { scale = Math.max(0.6, +(scale - 0.2).toFixed(2)); applyTransform(); });
+    resetZoom.addEventListener('click', () => { scale = 1; tx = 0; ty = 0; applyTransform(); });
+    zoomIn.addEventListener('click', () => { scale = Math.min(6, +(scale + 0.2).toFixed(2)); applyTransform(); });
+    zoomOut.addEventListener('click', () => { scale = Math.max(0.6, +(scale - 0.2).toFixed(2)); applyTransform(); });
 
     stage.addEventListener('wheel', (e) => {
       if(!modal.classList.contains('open')) return;
@@ -505,10 +641,194 @@
     zoomImg.addEventListener('pointerup', () => dragging = false);
     zoomImg.addEventListener('pointercancel', () => dragging = false);
 
-    window.addEventListener('keydown', (e) => {
-      if(e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+    /* =========================
+       Finestra Appunti: toggle + drag + autosave + export
+       ========================= */
+    const toggleNotes = document.getElementById('toggleNotes');
+    const notesWin = document.getElementById('notesWin');
+    const notesDrag = document.getElementById('notesDrag');
+    const notesText = document.getElementById('notesText');
+    const closeNotes = document.getElementById('closeNotes');
+    const exportTxt = document.getElementById('exportTxt');
+    const clearNotes = document.getElementById('clearNotes');
+    const statusEl = document.getElementById('status');
+    const dot = document.getElementById('dot');
+    const counter = document.getElementById('counter');
+    const notesSub = document.getElementById('notesSub');
+
+    // Chiave per-file (ogni lezione html ha i suoi appunti)
+    const NOTES_KEY = `mw_notes::${location.pathname}`;
+    const POS_KEY   = `mw_notes_pos::${location.pathname}`;
+
+    function setStatus(kind, text){
+      statusEl.textContent = text;
+      dot.classList.remove('ok','warn','err');
+      if(kind) dot.classList.add(kind);
+    }
+
+    function openNotes(){
+      notesWin.classList.add('open');
+      toggleNotes.setAttribute('aria-pressed', 'true');
+      // porta in primo piano
+      notesWin.style.zIndex = String(getTopZ());
+      notesText.focus();
+    }
+    function closeNotesWin(){
+      notesWin.classList.remove('open');
+      toggleNotes.setAttribute('aria-pressed', 'false');
+    }
+
+    toggleNotes.addEventListener('click', () => {
+      const open = notesWin.classList.contains('open');
+      open ? closeNotesWin() : openNotes();
     });
+    closeNotes.addEventListener('click', closeNotesWin);
+
+    // Ripristino testo salvato
+    const saved = localStorage.getItem(NOTES_KEY);
+    if(saved !== null) {
+      notesText.value = saved;
+      setStatus('ok','Recuperati');
+    } else {
+      setStatus(null,'Pronto');
+    }
+
+    // Ripristino posizione finestra (se salvata)
+    const savedPos = localStorage.getItem(POS_KEY);
+    if(savedPos){
+      try{
+        const p = JSON.parse(savedPos);
+        if(typeof p.left === 'number') notesWin.style.left = p.left + 'px';
+        if(typeof p.top === 'number')  notesWin.style.top  = p.top  + 'px';
+        // quando setti left/top, togli right/bottom
+        notesWin.style.right = 'auto';
+        notesWin.style.bottom = 'auto';
+      }catch{}
+    }
+
+    // Sottotitolo appunti
+    notesSub.textContent = `Lezione: ${location.pathname.split('/').pop() || 'index.html'}`;
+
+    // Autosave (debounce)
+    let saveTimer = null;
+    function scheduleSave(){
+      setStatus('warn','Scrivendo…');
+      if(saveTimer) clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => {
+        try{
+          localStorage.setItem(NOTES_KEY, notesText.value);
+          setStatus('ok','Salvati');
+        }catch(e){
+          setStatus('err','Errore salvataggio');
+        }
+      }, 350);
+    }
+
+    function updateCounter(){
+      counter.textContent = `${notesText.value.length} caratteri`;
+    }
+    updateCounter();
+
+    notesText.addEventListener('input', () => {
+      updateCounter();
+      scheduleSave();
+    });
+
+    // Export .txt
+    exportTxt.addEventListener('click', () => {
+      const blob = new Blob([notesText.value], {type: 'text/plain;charset=utf-8'});
+      const a = document.createElement('a');
+      const lessonName = (location.pathname.split('/').pop() || 'lezione').replace('.html','');
+      const stamp = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+      a.href = URL.createObjectURL(blob);
+      a.download = `${lessonName}-appunti-${stamp}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        URL.revokeObjectURL(a.href);
+        a.remove();
+      }, 0);
+    });
+
+    // Svuota appunti
+    clearNotes.addEventListener('click', () => {
+      notesText.value = '';
+      updateCounter();
+      localStorage.setItem(NOTES_KEY, '');
+      setStatus('ok','Svuotati');
+      notesText.focus();
+    });
+
+    // Drag finestra (mouse/touch) sulla barra in alto
+    let drag = {active:false, startX:0, startY:0, startLeft:0, startTop:0};
+    function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+
+    function getTopZ(){
+      // semplice: aumenta a ogni apertura/drag
+      const z = Number(notesWin.dataset.z || '80') + 1;
+      notesWin.dataset.z = String(z);
+      return z;
+    }
+
+    notesDrag.addEventListener('pointerdown', (e) => {
+      drag.active = true;
+      notesWin.style.zIndex = String(getTopZ());
+      notesDrag.setPointerCapture(e.pointerId);
+
+      const rect = notesWin.getBoundingClientRect();
+      drag.startX = e.clientX;
+      drag.startY = e.clientY;
+      drag.startLeft = rect.left;
+      drag.startTop = rect.top;
+
+      // fissiamo left/top e disattiviamo right/bottom
+      notesWin.style.left = rect.left + 'px';
+      notesWin.style.top = rect.top + 'px';
+      notesWin.style.right = 'auto';
+      notesWin.style.bottom = 'auto';
+    });
+
+    notesDrag.addEventListener('pointermove', (e) => {
+      if(!drag.active) return;
+      const dx = e.clientX - drag.startX;
+      const dy = e.clientY - drag.startY;
+
+      const rect = notesWin.getBoundingClientRect();
+      const w = rect.width, h = rect.height;
+
+      const maxLeft = window.innerWidth - w - 8;
+      const maxTop  = window.innerHeight - h - 8;
+
+      const left = clamp(drag.startLeft + dx, 8, maxLeft);
+      const top  = clamp(drag.startTop + dy, 8, maxTop);
+
+      notesWin.style.left = left + 'px';
+      notesWin.style.top = top + 'px';
+    });
+
+    notesDrag.addEventListener('pointerup', () => {
+      if(!drag.active) return;
+      drag.active = false;
+      // salva posizione
+      const rect = notesWin.getBoundingClientRect();
+      localStorage.setItem(POS_KEY, JSON.stringify({left: rect.left, top: rect.top}));
+    });
+    notesDrag.addEventListener('pointercancel', () => drag.active = false);
+
+    // Esc chiude zoom; Ctrl/Cmd+K apre appunti (scorciatoia utile)
+    window.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape' && modal.classList.contains('open')) closeZoomModal();
+      const isMac = navigator.platform.toLowerCase().includes('mac');
+      const cmd = isMac ? e.metaKey : e.ctrlKey;
+      if(cmd && (e.key.toLowerCase() === 'k')){
+        e.preventDefault();
+        const open = notesWin.classList.contains('open');
+        open ? closeNotesWin() : openNotes();
+      }
+    });
+
+    // Apri appunti automaticamente alla prima visita? (disattivato)
+    // openNotes();
   </script>
 </body>
 </html>
-
