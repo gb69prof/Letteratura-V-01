@@ -1,0 +1,867 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>D’Annunzio — Il Piacere</title>
+  <style>
+    :root{
+      --bg:#0f141a;
+      --paper:#ffffff;
+      --ink:#12161c;
+      --muted:#5b6676;
+      --shadow: 0 14px 40px rgba(0,0,0,.28);
+      --radius: 18px;
+      --accent:#b11212;
+      --danger:#ff4d4d;
+      --ok:#39d98a;
+      --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
+      --sans: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    html,body{height:100%;}
+    body{
+      margin:0;
+      background: radial-gradient(1100px 800px at 20% 10%, rgba(177,18,18,.14), transparent 60%),
+                  radial-gradient(1100px 800px at 85% 15%, rgba(43,124,255,.12), transparent 55%),
+                  var(--bg);
+      color:#e8edf5;
+      font-family: var(--sans);
+    }
+
+    .app{
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px;
+      box-sizing: border-box;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 14px;
+      min-height: 100%;
+    }
+
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .brand{display:flex; flex-direction:column; line-height:1.1;}
+    .brand strong{font-size:14px;}
+    .brand span{font-size:12px; color: rgba(232,237,245,.72);}
+
+    .toolbar{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content:flex-end;
+    }
+
+    .btn{
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: #f4f7ff;
+      padding: 9px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      font-size: 13px;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+      text-decoration:none;
+    }
+    .btn:hover{ background: rgba(255,255,255,.10); }
+    .btn[aria-pressed="true"]{
+      background: rgba(43,124,255,.18);
+      border-color: rgba(43,124,255,.35);
+    }
+
+    .pill{
+      display:flex;
+      align-items:center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.14);
+      font-size: 12px;
+    }
+    input[type="range"]{ width: 160px; }
+
+    .spread{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+    .spread.two{grid-template-columns: 1fr 1fr;}
+
+    .page{
+      background:var(--paper);
+      color:var(--ink);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      border: 1px solid rgba(18,22,28,.08);
+      overflow:hidden;
+      position: relative;
+      min-height: 560px;
+    }
+    .page::before{
+      content:"";
+      position:absolute; inset:0;
+      background: linear-gradient(90deg, rgba(0,0,0,.06), transparent 20%, transparent 80%, rgba(0,0,0,.06));
+      opacity:.22;
+      pointer-events:none;
+    }
+    .page[data-side="left"]::after{
+      content:"";
+      position:absolute; top:0; bottom:0; right:0;
+      width: 26px;
+      background: linear-gradient(90deg, rgba(0,0,0,0), rgba(0,0,0,.12));
+      opacity:.55;
+      pointer-events:none;
+    }
+    .page[data-side="right"]::after{
+      content:"";
+      position:absolute; top:0; bottom:0; left:0;
+      width: 26px;
+      background: linear-gradient(90deg, rgba(0,0,0,.12), rgba(0,0,0,0));
+      opacity:.55;
+      pointer-events:none;
+    }
+
+    .page-inner{
+      padding: 32px 34px 38px;
+      position: relative;
+      z-index: 1;
+      font-family: var(--serif);
+      font-size: 18px;
+      line-height: 1.65;
+    }
+    .page h1{margin:0 0 10px; font-size: 26px;}
+    .page h2{margin: 18px 0 10px; font-size: 20px;}
+    .meta{
+      font-family: var(--sans);
+      font-size: 12px;
+      color: var(--muted);
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .page p{margin: 0 0 14px;}
+
+    .page a{color: var(--accent);}
+    .page a:hover{text-decoration: underline;}
+
+    blockquote{
+      margin: 14px 0 16px;
+      padding: 10px 12px;
+      border-left: 3px solid rgba(177,18,18,.55);
+      background: rgba(177,18,18,.07);
+      border-radius: 12px;
+      font-style: italic;
+    }
+
+    figure.float-media{
+      float: right;
+      width: min(44%, 360px);
+      margin: 6px 0 12px 14px;
+      border: 1px solid rgba(18,22,28,.10);
+      border-radius: 14px;
+      overflow: hidden;
+      background: #f8fafc;
+    }
+    figure.float-media figcaption{
+      font-family: var(--sans);
+      font-size: 12px;
+      color: #394455;
+      padding: 8px 10px;
+      border-top: 1px solid rgba(18,22,28,.08);
+      background: #fff;
+    }
+    .thumb{
+      display:block;
+      width:100%;
+      height:auto;
+      cursor: pointer;
+    }
+
+    .video-box{
+      margin: 0;
+      border-radius: 0;
+      overflow:hidden;
+      border: 0;
+      background:#0b1220;
+    }
+    .video-box iframe{
+      width:100%;
+      aspect-ratio: 16/9;
+      border:0;
+      display:block;
+    }
+
+    .modal{
+      position: fixed;
+      inset: 0;
+      background: rgba(10,12,16,.68);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index: 50;
+      padding: 18px;
+    }
+    .modal.open{display:flex;}
+
+    .modal-card{
+      width: min(1100px, 100%);
+      height: min(760px, 92vh);
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,.45);
+      backdrop-filter: blur(10px);
+      display:grid;
+      grid-template-rows: auto 1fr;
+    }
+    .modal-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      background: rgba(0,0,0,.25);
+      border-bottom: 1px solid rgba(255,255,255,.12);
+    }
+    .modal-top .title{
+      font-size: 13px;
+      color: rgba(255,255,255,.92);
+      font-family: var(--sans);
+    }
+    .modal-actions{display:flex; gap: 8px; flex-wrap: wrap; justify-content:flex-end;}
+    .iconbtn{
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.08);
+      color: #fff;
+      border-radius: 12px;
+      padding: 8px 10px;
+      cursor:pointer;
+      font-size: 12px;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .iconbtn:hover{background: rgba(255,255,255,.12);}
+
+    .stage{
+      position: relative;
+      overflow: hidden;
+      background: rgba(255,255,255,.06);
+      touch-action: none;
+    }
+    .zoomable{
+      position:absolute;
+      left:50%; top:50%;
+      transform: translate(-50%,-50%) scale(1);
+      transform-origin: center;
+      cursor: grab;
+      max-width: none;
+      width: 1200px;
+      height: auto;
+      user-select: none;
+      -webkit-user-drag: none;
+      border-radius: 14px;
+      box-shadow: 0 14px 40px rgba(0,0,0,.35);
+      touch-action: none;
+    }
+    .zoomable:active{cursor: grabbing;}
+
+    .pager-hint{
+      margin-top: 10px;
+      display:flex;
+      justify-content:space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-family: var(--sans);
+      font-size: 12px;
+      color: rgba(232,237,245,.75);
+    }
+
+    .notes-window{
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      width: min(520px, calc(100vw - 44px));
+      height: 320px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 18px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.45);
+      backdrop-filter: blur(10px);
+      z-index: 80;
+      display: none;
+      overflow: hidden;
+    }
+    .notes-window.open{display: grid; grid-template-rows: auto 1fr auto;}
+
+    .notes-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      background: rgba(0,0,0,.25);
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      cursor: grab;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .notes-top:active{cursor: grabbing;}
+
+    .notes-title{
+      display:flex;
+      flex-direction:column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .notes-title strong{
+      font-size: 13px;
+      color: rgba(255,255,255,.92);
+      font-family: var(--sans);
+      letter-spacing:.2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .notes-title span{
+      font-size: 11px;
+      color: rgba(255,255,255,.70);
+      font-family: var(--sans);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .notes-actions{
+      display:flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content:flex-end;
+      flex-shrink:0;
+    }
+
+    .notes-body{
+      padding: 10px 12px;
+      background: rgba(255,255,255,.06);
+    }
+    .notes-text{
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      resize: none;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.20);
+      color: rgba(255,255,255,.92);
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.45;
+      padding: 10px 12px;
+      outline: none;
+    }
+    .notes-text::placeholder{color: rgba(255,255,255,.55);}
+
+    .notes-bottom{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border-top: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      font-family: var(--sans);
+      font-size: 12px;
+      color: rgba(255,255,255,.75);
+    }
+    .status-dot{
+      display:inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 99px;
+      background: rgba(255,255,255,.45);
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    .status-dot.ok{background: rgba(57,217,138,.9);}
+    .status-dot.warn{background: rgba(255,220,60,.9);}
+    .status-dot.err{background: rgba(255,77,77,.9);}
+
+    @media (max-width: 980px){
+      .spread.two{grid-template-columns: 1fr;}
+      figure.float-media{float:none; width: 100%; margin: 8px 0 14px;}
+      input[type="range"]{width: 140px;}
+      .notes-window{right: 14px; bottom: 14px; width: calc(100vw - 28px);}
+    }
+  
+/* --- Il Piacere: fold + linklist --- */
+.linklist{margin:10px 0 18px 18px;padding:0}
+.linklist li{margin:6px 0}
+.linklist a{text-decoration:none;border-bottom:1px dashed rgba(0,0,0,.35)}
+.linklist a:hover{border-bottom-style:solid}
+
+.fold{border:1px solid rgba(0,0,0,.12);border-radius:12px;background:rgba(255,255,255,.6);margin:10px 0 16px;overflow:hidden}
+.fold summary{cursor:pointer;list-style:none;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.fold summary::-webkit-details-marker{display:none}
+.fold-title{font-weight:700}
+.fold-snippet{font-size:.92rem;opacity:.82}
+.fold-body{padding:0 14px 14px}
+.fold[open] summary{background:rgba(0,0,0,.04)}
+
+</style>
+</head>
+
+<body>
+  <div class="app">
+    <header>
+      <div class="brand">
+        <strong>D’Annunzio — Il Piacere</strong>
+        <span>Libro 02 · una lezione = una pagina HTML</span>
+      </div>
+
+      <div class="toolbar">
+        <!-- ✅ LINK CORRETTO: torna al ROOT -->
+        <a class="btn" href="../index.html" title="Torna all’index del progetto">⌂ Index</a>
+
+        <button class="btn" id="toggleTwo" aria-pressed="false">↔︎ Vista 2 pagine</button>
+
+        <div class="pill" title="Dimensione del testo">
+          A− <input id="font" type="range" min="15" max="24" value="18" /> A+
+        </div>
+
+        <button class="btn" id="prev">◀︎ Pagina 1</button>
+        <button class="btn" id="next">Pagina 2 ▶︎</button>
+
+        <button class="btn" id="toggleNotes" aria-pressed="false" title="Apri/chiudi appunti">
+          📝 Appunti
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <div class="spread" id="spread">
+        <!-- PAGINA 1 -->
+        <article class="page" data-side="left" id="page1" aria-label="Pagina 1">
+          <div class="page-inner">
+            <h1>Il Piacere</h1>
+            <div class="meta">
+              <span>Estetismo</span>
+              <span>Dualismo</span>
+              <span>Decadenza</span>
+            </div>
+
+            <p>
+              <strong>Il Piacere</strong> è il laboratorio narrativo dell’esteta: bellezza come valore assoluto,
+              vita come rappresentazione, piacere come metodo e condanna. Qui D’Annunzio mostra l’incanto e,
+              insieme, il suo prezzo: isolamento, superficialità, incapacità di un senso duraturo.
+            </p>
+
+            <figure class="float-media">
+              <img class="thumb" data-zoom="true" src="assets/piacere-temi.png" alt="Il Piacere: temi principali (clicca per zoom)" />
+              <figcaption><strong>Temi principali</strong> — mappa concettuale.</figcaption>
+            </figure>
+
+            <h2>Stile e linguaggio</h2>
+            <p>
+              La prosa è ricca, musicale, minuziosa: costruisce un <em>mondo estetico</em> (ambienti, vesti, sensazioni)
+              e lo fa diventare una gabbia dorata. La bellezza, quando è artificiale, finisce per essere <strong>insoddisfacente</strong>.
+            </p>
+
+            <figure class="float-media">
+              <img class="thumb" data-zoom="true" src="assets/piacere-stile-linguaggio.png" alt="Stile e linguaggio nel Piacere (clicca per zoom)" />
+              <figcaption><strong>Stile e linguaggio</strong> — come l’estetismo si scrive.</figcaption>
+            </figure>
+
+            <div class="note">
+              Regola di lettura: nel romanzo la bellezza non è “decorazione”. È una <em>forza</em> che plasma i personaggi e li consuma.
+            </div>
+</div>
+        </article>
+
+        <!-- PAGINA 2 -->
+        <article class="page" data-side="right" id="page2" aria-label="Pagina 2">
+          <div class="page-inner">
+            <h1>Brani e approfondimenti</h1>
+            <div class="meta">
+              <span>Testi</span>
+              <span>Commenti</span>
+              <span>Personaggi</span>
+            </div>
+
+            <figure class="float-media" style="float:none; width:100%; margin: 6px 0 14px;">
+              <img class="thumb" data-zoom="true" src="assets/piacere-personaggi.png" alt="Il Piacere: Andrea, Elena, Maria (clicca per zoom)" />
+              <figcaption><strong>Personaggi</strong> — triangolo e dualismo.</figcaption>
+            </figure>
+
+            <h2>Indice dei brani</h2>
+            <ol class="linklist">
+              <li><a href="nascita-esteta.html">La nascita dell’esteta</a></li>
+              <li><a href="asta.html">L’asta</a></li>
+              <li><a href="addio.html">Andrea ed Elena: l’addio</a></li>
+              <li><a href="rivelazione.html">Andrea e Maria: la rivelazione</a></li>
+            </ol>
+
+            <h2>Approfondimento</h2>
+            <ol class="linklist">
+              <li><a href="Andrea.html">Andrea</a></li>
+              <li><a href="Elena.html">Elena</a></li>
+              <li><a href="Maria.html">Maria</a></li>
+            </ol>
+
+            <h2>Brano</h2>
+            <details class="fold">
+              <summary>
+                <span class="fold-title">Andrea ed Elena: l’addio</span>
+                <span class="fold-snippet">la lettura: Andrea ed Elena Poiché il calore del camino era soverchio, ella si fece schermo con la mano nuda che s'illuminò come un alabastro rosato: gli anelli nel gesto scintillarono. Ella disse: -­‐ Coprite il fuoco; …</span>
+              </summary>
+              <div class="fold-body">
+                <p>la lettura: Andrea ed Elena</p>
+            <p>Poiché il calore del camino era soverchio, ella si fece schermo con la mano nuda che s'illuminò come un alabastro rosato: gli anelli nel gesto scintillarono. Ella disse:</p>
+            <p>-­‐ Coprite il fuoco; vi prego. Brucia troppo.</p>
+            <p>-­‐ Non vi piace più la fiamma? Ed eravate, un tempo, una salamandra! Questo camino è memore...</p>
+            <p>-­‐ Non movete le memorie -­‐ ella interruppe. -­‐ Coprite dunque il fuoco, e accendete un lume. Io farò il tè.</p>
+            <p>-­‐ Non volete togliervi il mantello? -­‐ No, perché debbo andar via presto. E' già tardi. -­‐ Ma soffocherete. Ella si levò, con un piccolo atto d'impazienza. -­‐ Aiutatemi, allora. Andrea sentì, nel toglierle il mantello, il profumo di lei. Non era più quello d'una volta; ma era d'una tal bontà che gli giunse fino ai precordii. -­‐ Avete un altro profumo -­‐ egli disse, con un accento singolare. Rispose ella, semplicemente: -­‐ Sì. Vi piace? Andrea, ancóra tenendo il mantello fra le mani, affondò il volto nella pelliccia che ornava il collo e che più quindi era profumata dal contatto della carne e de' capelli di lei. Poi chiese:</p>
+            <p>-­‐ Come si chiama? -­‐ E' senza nome. Ella di nuovo sedette su la poltrona, entrando nel chiaror della fiamma. Aveva un abito nero, tutto composto di merletti in mezzo a cui brillavano perline innumerevoli, nere e d'acciaio.</p>
+            <p>Il crepuscolo moriva contro i vetri. Andrea accese su i candelabri di ferro certe candele attorte, di colore aranciato molto intenso. Poi trasse d'innanzi al caminetto il parafuoco. Ambedue, in quell'intervallo di silenzio, erano nell'animo perplessi. Elena non aveva la conscienza esatta del momento, né la sicurezza di sé; pur tentando uno sforzo, non riusciva a riafferrare il suo proposito, a raccogliere le sue intenzioni, a riprendere la sua volontà. D'innanzi a quell'uomo a cui un tempo l'aveva stretta una così alta passione, in quel luogo dove ella aveva vissuto la sua più ardente vita, sentiva a poco a poco tutti i pensieri vacillare, dissolversi, dileguarsi. Ormai il suo spirito stava per entrare in quello stato delizioso, direi quasi di fluidità sentimentale, in cui riceve ogni movimento, ogni attitudine, ogni forma dalle vicende esterne, come un vapore aereo dalle mutazioni dell'atmosfera. Esitava, prima di abbandonarvisi.<br>Andrea disse, piano, quasi umile: -­‐ Va bene, così? Ella gli sorrise, senza rispondere, poiché quelle parole le avevano dato un diletto indefinibile, quasi un tremolio di dolcezza a sommo del petto. Incominciò la sua opera delicata. Accese la lampada sotto il vaso dell'acqua; aprì la scatola di lacca, dov'era conservato il tè, e mise nella porcellana una quantità misurata d'aroma; poi preparò due tazze. I suoi gesti erano lenti e un poco irresoluti, come di chi operando abbia l'animo rivolto ad altro oggetto; le sue mani bianche e purissime avevano nel muoversi una leggerezza quasi di farfalle, non parendo toccare le cose ma appena sfiorarle; dai suoi gesti, dalle sue mani, da ogni lieve ondulamento del suo corpo usciva non so che tenue emanazion di piacere e andava a blandire il senso dell'amante.<br>Andrea, seduto da presso, la guardava con gli occhi un poco socchiusi, bevendo per le pupille il fascino voluttuoso che nasceva da lei. Era come se ogni moto divenisse per lui tangibile idealmente. Quale amante non ha provato questo inesprimibile gaudio, in cui par quasi che la potenza sensitiva del tatto si affini così da avere la sensazione senza la immediata materialità del contatto?<br>Ambedue tacevano. Elena s'era abbandonata sul cuscino: aspettava che l'acqua bollisse. Guardando la fiamma azzurra della lampada, toglieva dalle dita gli anelli, e se li rimetteva di continuo, smarrita in un'apparenza di sogno. Non era un sogno, ma come una rimembranza vaga, ondeggiante, confusa, fuggevole. Tutte le memorie dell'amor passato le risorgevano nello spirito, ma senza chiarezza: e le davano una espressione incerta ch'ella non sapeva se fosse un piacere o un dolore. Pareva come quando da molti fiori estinti, de' quali ciascuno ha perduto ogni singolarità di colori e di effluvi, nasce una comune esalazione in cui e' possibile riconoscere i diversi elementi. Pareva ch'ella portasse in sé l'ultimo alito dei ricordi già spirati, l'ultima traccia delle gioie già scomparse, l'ultimo risentimento della felicità già morta, qualche cosa di simile a un vapor dubbio da cui emergessero imagini senza nome, senza contorno, interrotte. Ella non sapeva se fosse un piacere o un dolore; ma a poco a poco quell'agitazione misteriosa, quella inquietudine indefinibile aumentavano e le gonfiavano il cuore di dolcezza e di amarezza. I presentimenti oscuri, i segreti rimpianti, i timori superstiziosi, le aspirazioni combattute, i dolori soffocati, i sogni travagliati, i desiderii non appagati, tutti quei torbidi elementi che componevano l'interior vita di lei ora si rimescolavano e tempestavano.<br>Ella taceva, tutta raccolta in sé. Mentre il suo cuore quasi traboccava, ella godeva accumularvi ancóra col silenzio la commozione. Parlando, ella l'avrebbe dispersa.<br>Il vaso dell'acqua incominciò a levare il bollore pianamente.<br>Andrea su la sedia bassa, tenendo il gomito poggiato al ginocchio e il mento nella palma, guardava ora la bella creatura con tale intensità ch'ella, pur non volgendosi, sentiva su la sua persona quella persistenza e ne aveva quasi un vago malessere fisico. Andrea, guardandola, pensava: « Io ho posseduto questa donna, un giorno. » Egli ripeteva a sé stesso l'affermazione, per convincersi; e faceva, per convincersi, uno sforzo mentale, richiamava alla memoria una qualche attitudine di lei nel piacere, cercava di rivederla fra le sue braccia. La certezza del possesso gli sfuggiva. Elena gli pareva una donna nuova, non mai goduta, non mai stretta.<br>Ella era, in verità, ancor più desiderabile che una volta. L'enigma quasi direi plastico della sua bellezza era ancor più oscuro e attirante. La sua testa dalla fronte breve, dal naso dritto, dal sopracciglio arcuato, d'un disegno così puro, così fermo, così antico, che pareva essere uscita dal cerchio d'una medaglia siracusana, aveva negli occhi e nella bocca un singolar contrasto di espressione: quell'espressione passionata, intensa, ambigua, sopraumana, che solo qualche moderno spirito, impregnato di tutta la profonda corruzione dell'arte, ha saputo infondere in tipi di donna immortali come Monna Lisa e Nelly O' Brien.<br>« Altri ora la possiede » pensava Andrea, guardandola. « Altre mani la toccano, altre labbra la baciano. » E, mentre egli non giungeva a formar nella fantasia l'imagine dell'unione di sé con lei, vedeva nuovamente invece, con implacabile precisione, l'altra imagine. E una smania l'invadeva, di sapere, di scoprire, d'interrogare, acutissima.<br>Elena s'era chinata al tavolo, poiché il vapore fuggiva, per la commessura del coperchio, dal vaso bollente. Versò appena un poco d'acqua sul tè; poi mise due pezzi di zucchero in una sola tazza; poi versò sul tè altra acqua; poi spense la fiamma azzurra. Ella fece tutto questo con una cura quasi tenera, ma senza mai volgersi ad Andrea. L'interno tumulto risolvevasi ora in un intenerimento così molle ch'ella si sentiva chiudere la gola e inumidire gli occhi; e non poteva resistere. Tanti pensieri contrarii, tante contrarie agitazioni e alterazioni dell'animo si raccoglievano ora in una lacrima.<br>Ella, per un gesto, urtò il portabiglietti d'argento, che cadde sul tappeto. Andrea lo raccolse, e guardò le due giarrettiere incise. Portava ciascuna un motto sentimentale: From Dreamland -­‐ A stranger hither; Dal Paese del Sogno -­‐ Straniera qui.<br>Com'egli levava gli occhi, Elena gli offerì la tazza fumante, con un sorriso un poco velato dalla lacrima.<br>Vide egli quel velo; e innanzi a quell'inaspettato segno di tenerezza fu invaso da un tale impeto d'amore e di riconoscenza che posò la tazza, s'inginocchiò, prese la mano d'Elena, sopra vi mise la bocca.<br>-­‐ Elena! Elena!<br>Le parlava a voce bassa, in ginocchio, così da vicino che pareva volesse beverne l'alito. L'ardore era sincero, mentre le parole talvolta mentivano. « Egli l'amava, l'aveva sempre amata, non aveva mai mai mai potuto dimenticarla! aveva sentito, rincontrandola, tutta la sua passione insorgere con tal violenza che n'aveva avuto quasi terrore: una specie di terrore ansioso, come s'egli avesse intravisto, in un lampo, lo sconvolgimento di tutta la sua vita. »<br>-­‐ Tacete! Tacete! -­‐ disse Elena, con il volto atteggiato di dolore, pallidissima.<br>Andrea seguitava, sempre in ginocchio, accendendosi nell'imaginazione del sentimento. « Egli aveva sentito trascinar via da lei, in quella fuga improvvisa, la maggior e miglior parte di sé. Dopo, egli non sapeva dirle tutta la miseria dei suoi giorni, l'angoscia de' suoi rimpianti, l'assidua implacabile divorante sofferenza interiore. La tristezza era per lui in fondo a tutte le cose. La fuga del tempo gli era un supplizio insopportabile. Non tanto egli rimpiangeva i giorni felici quanto si doleva de' giorni che ora passavano inutilmente per la felicità. Quelli almeno gli avevan lasciato un ricordo: questi gli lasciavano un rammarico profondo, quasi un rimorso... La sua vita si consumava in sé stessa, portando in sé la fiamma inestinguibile d'un sol desiderio, l'incurabile disgusto d'ogni altro godimento. Talvolta lo assalivano impeti di cupidigia quasi rabbiosi, disperati ardori verso il piacere; ed era come una ribellion violenta del cuore non saziato, come un sussulto della speranza che non si rassegnava a morire. Talvolta anche gli pareva d'esser ridotto a nulla; e rabbrividiva innanzi ai grandi abissi vacui del suo essere: di tutto l'incendio della sua giovinezza non gli restava che un pugno di cenere. Talvolta anche, a simiglianza d'uno di que' sogni che si dileguano su l'alba, tutto il suo passato, tutto il suo presente si dissolvevano; si distaccavano dalla sua conscienza e cadevano, come una spoglia fragile, come una veste vana. Egli non si ricordava più di nulla, come un uomo escito da una lunga infermità, come un convalescente stupefatto. Egli alfine obliava; sentiva l'anima sua entrar dolcemente nella morte... Ma, d'improvviso, su da quella specie di tranquillità obliosa scaturiva un nuovo dolore e l'idolo abbattuto risorgeva più alto come un germe indistruttibile. Ella, ella era l'idolo che seduceva in lui tutte le volontà del cuore, rompeva in lui tutte le forze dell'intelletto, teneva in lui tutte le più segrete vie dell'anima chiuse ad ogni altro amore, ad ogni altro dolore, ad ogni altro sogno, per sempre, per sempre... »<br>Andrea mentiva; ma la sua eloquenza era così calda, la sua voce era così penetrante, il tócco delle sue mani era così amoroso, che Elena fu invasa da una infinita dolcezza.<br>-­‐ Taci! -­‐ ella disse. -­‐ Io non debbo ascoltarti; io non sono più tua; io non potrò essere tua più mai. Taci! Taci!<br>-­‐ No, ascoltami. -­‐ Non voglio. Addio. Bisogna ch'io vada. Addio, Andrea. E' già tardi, lasciami. Ella sviluppò la mano dalla stretta del giovine; e, superando ogni interno languore, fece atto di levarsi. -­‐ Perché dunque sei venuta? -­‐ chiese egli, con la voce un po' roca, impedendole quell'atto. Sebbene la violenza fosse lievissima, ella corrugò i sopraccigli, ed esitò prima di rispondere. -­‐ Son venuta -­‐ ella rispose, con una certa lentezza misurata, guardando l'amante negli occhi -­‐ son venuta perché tu m'hai chiamata. Per l'amore d'una volta, per il modo con cui quell'amore fu rotto, per il lungo silenzio oscuro della lontananza, io non avrei potuto senza durezza ricusare l'invito. E poi, io voleva dirti quel che t'ho detto: ch'io non sono più tua, che non potrò essere tua più mai. Volevo dirti questo, lealmente, per evitare a me e a te qualunque inganno doloroso, qualunque pericolo, qualunque amarezza, nell'avvenire. Hai inteso?<br>Andrea chinò il capo, quasi su le ginocchia di lei, in silenzio. Ella gli toccò i capelli, col gesto un tempo familiare.<br>-­‐ E poi -­‐ seguitò, con una voce che mise a lui un brivido in tutte le fibre -­‐ e poi... volevo dirti ch'io ti amo, ch'io ti amo non meno d'una volta, che ancóra tu sei l'anima dell'anima mia, e che io voglio essere la tua sorella più cara, la tua amica più dolce. Hai inteso?<br>Andrea non si mosse. Ella, prendendo le tempie di lui fra le sue mani, gli sollevò la fronte; lo costrinse a guardarla negli occhi.<br>-­‐ Hai inteso? -­‐ ripeté, con una voce anche più tenera e più sommessa.<br>I suoi occhi, all'ombra de' lunghi cigli, parevano come suffusi d'un qualche olio purissimo e sottilissimo. La sua bocca, un poco aperta, aveva nel labbro superiore un piccolo tremito.<br>-­‐ No; tu non mi amavi, tu non mi ami! -­‐ ruppe infine Andrea, togliendosi dalle tempie le mani di lei e traendosi indietro, poiché sentiva già nelle vene il fuoco insinuante ch'esalavano anche involontariamente quelle pupille e provava più acre il dolore d'aver perduto il possesso materiale della bellissima donna. -­‐ Tu non mi amavi! Tu, allora avesti cuore d'uccidere l'amor tuo, d'improvviso, quasi a tradimento, mentre ti dava la sua ebrezza più forte. Tu mi fuggisti, tu mi abbandonasti, tu mi lasciasti solo, sbigottito, tutto doloroso, a terra, mentre io ero ancóra accecato di promesse. Tu non mi amavi, tu non mi ami! Dopo una lontananza così lunga, piena di misteri, muta e inesorabile; dopo una così lunga attesa, in cui ho consunto il fiore della mia vita a nutrire una tristezza che m'era cara perché mi veniva da te; dopo tanta felicità e dopo tanta sciagura, ecco, tu rientri in un luogo dove ogni cosa per noi custodisce un ricordo ancóra vivo, e mi dici soavemente: « Io non sono più tua. Addio. » Ah, tu non mi ami!<br>-­‐ Ingrato! Ingrato! -­‐ esclamò Elena, ferita dalla voce quasi irosa del giovine. -­‐ Che sai tu di quel ch'è accaduto, di quel ch'io ho sofferto? Che sai?<br>-­‐ Io non so nulla, io non voglio nulla sapere -­‐ rispose Andrea, duramente, involgendola d'uno sguardo un po' torbido, in fondo a cui tralucevano i suoi desideri esasperati. -­‐ Io so che tu fosti mia, un giorno, tutta quanta, con un abbandono senza ritegno, con una voluttà senza misura, come non mai alcuna altra donna; e so che né il mio spirito né la mia carne dimenticheranno mai quella ebrezza...<br>-­‐ Taci!<br>-­‐ Che fa a me la tua pietà di sorella? Tu, contro il tuo volere, ma la offri guardandomi con occhi d'amante, toccandomi con mani malsicure. Troppe volte ho veduto i tuoi occhi spengersi nel gaudio; troppe volte le tue mani m'han sentito rabbrividire. Io ti desidero.<br>Incitato dalle sue stesse parole, egli la strinse forte ai polsi ed appressò la sua faccia a quella di lei così ch'ella ebbe in su la bocca il caldo alito.<br>-­‐ Io ti desidero, come non mai -­‐ seguitò egli, cercando d'attirarla al suo bacio, circondandole con un braccio il busto. -­‐ Ricórdati! Ricórdati!<br>Elena si levò respingendolo. Tremava tutta. -­‐ Non voglio. Intendi? Egli non intendeva. Si riavvicinava ancóra, con le braccia tese, per prenderla: pallidissimo, risoluto. -­‐ Soffriresti tu -­‐ gridò ella con la voce un po' soffocata, non potendo patire la violenza -­‐ soffriresti tu di spartire con altri il mio corpo? Ella aveva profferita quella domanda crudele, senza pensare. Ora, con gli occhi molto aperti, guardava l'amante: ansiosa e quasi sbigottita, come chi per salvarsi abbia vibrato un colpo senza misurarne la forza, e tema di aver ferito troppo nel profondo.<br>L'ardore di Andrea cadde d'un tratto. E gli si dipinse sul volto un dolor così grave che la donna n'ebbe al cuore una fitta.<br>Andrea disse, dopo un intervallo di silenzio: -­‐ Addio. In quella sola parola era l'amarezza di tutte le altre parole ch'egli aveva ricacciate indietro. Elena rispose dolcemente: -­‐ Addio. Perdonami.</p>
+              </div>
+            </details>
+
+            <h2>Commento</h2>
+            <details class="fold">
+              <summary>
+                <span class="fold-title">Rilettura critica dal punto di vista di Elena Muti</span>
+                <span class="fold-snippet">Andrea ed Elena – rilettura critica dal punto di vista di Elena Muti Riletto alla luce della figura complessa di Elena Muti, il brano dell’incontro con Andrea Sperelli acquista un significato più ambiguo e inquietante. N…</span>
+              </summary>
+              <div class="fold-body">
+                <p>Andrea ed Elena – rilettura critica dal punto di vista di Elena Muti<br>Riletto alla luce della figura complessa di Elena Muti, il brano dell’incontro con Andrea Sperelli acquista un significato più ambiguo e inquietante. Non è soltanto la scena di un amore finito, ma un episodio in cui si manifesta con chiarezza la natura profonda di Elena: donna dell’enigma, della finzione e del controllo, capace di esercitare la seduzione anche nel momento del rifiuto.<br>Fin dall’inizio Elena domina la scena attraverso gesti minimi e parole misurate. Chiede di coprire il fuoco, di accendere un lume, di fare il tè: sono atti apparentemente domestici, ma in realtà servono a regolare lo spazio, il tempo e l’intensità emotiva dell’incontro. Il fuoco, simbolo della passione, viene attenuato; la luce artificiale sostituisce quella naturale. Elena non vuole che il passato divampi: vuole governarlo.<br>Il suo corpo e i suoi movimenti, descritti con una sensualità quasi sacrale, non sono mai puramente istintivi. Le mani che si muovono lente, il profumo «senza nome», il silenzio prolungato: tutto concorre a creare un’atmosfera di voluttà controllata. Elena non si abbandona, ma si lascia percepire. La sua sensualità non è dono, è irradiazione; non concede, seduce.<br>Quando afferma di non essere più di Andrea e di non poterlo essere mai più, Elena dice il vero, ma lo dice in una forma ambigua. Alla negazione segue subito una dichiarazione d’amore che non apre alla fusione, bensì a una relazione sublimata e impraticabile: sorella, amica, anima dell’anima. È il tratto tipico della sua natura duplice: accendere il desiderio mentre lo interdice.<br>Andrea, incapace di distinguere l’amore dal possesso, reagisce con violenza verbale e fisica. Ma la sua veemenza è innescata proprio dall’ambiguità di Elena, che guarda, tocca, tace e parla in modo tale da risvegliare l’illusione del ritorno. In questo senso Elena non è una vittima passiva: è pienamente consapevole del potere afrodisiaco che esercita, anche se talvolta sembra crederlo involontario.<br>La domanda crudele sullo «spartire il corpo» segna il punto di rottura definitivo. Con essa Elena smaschera il vero desiderio di Andrea e lo ferisce nel punto più sensibile: l’esclusività. È una frase che non nasce da pietà, ma da lucidità e forse da una forma di egoismo difensivo. Elena vuole sottrarsi, ma senza rinunciare al proprio dominio emotivo.<br>Il commiato finale non è una riconciliazione, bensì un atto di chiusura controllata. Elena esce dalla scena non purificata, ma integra nella sua natura: voluttuosa, enigmatica, calcolatrice e fragile insieme. Andrea resta sconfitto non solo come amante, ma come esteta, incapace di comprendere che l’oggetto del suo culto non è mai stato possedibile.<br>Elena Muti è una figura profondamente moderna: non simbolo di amore assoluto, ma incarnazione di una sensualità consapevole e ambigua, che usa l’arte della finzione per sopravvivere e dominare in un mondo di desideri maschili. Il brano non racconta solo la fine di un amore, ma l’impossibilità dell’estetismo di reggere l’enigma dell’altro.</p>
+              </div>
+            </details>
+
+            <div class="note">
+              Separazione netta: <strong>brano</strong> e <strong>commento</strong> non si confondono.
+              Prima il testo (sensazione), poi la lente critica (giudizio).
+            </div>
+</div>
+        </article>
+      </div>
+
+      <div class="pager-hint">
+        <span>Zoom: rotella · Pan: trascina · Reset: pulsante · Chiudi zoom: Esc</span>
+        <span>Appunti: trascina la barra · Autosave + Export .txt</span>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Zoom immagine">
+    <div class="modal-card">
+      <div class="modal-top">
+        <div class="title">Zoom/Pan — immagine navigabile</div>
+        <div class="modal-actions">
+          <button class="iconbtn" id="zoomOut">−</button>
+          <button class="iconbtn" id="zoomIn">+</button>
+          <button class="iconbtn" id="resetZoom">Reset</button>
+          <button class="iconbtn" id="closeZoom">Chiudi</button>
+        </div>
+      </div>
+      <div class="stage" id="stage">
+        <img id="zoomImg" class="zoomable" alt="Immagine zoomabile" />
+      </div>
+    </div>
+  </div>
+
+  <section class="notes-window" id="notesWin" aria-label="Finestra appunti">
+    <div class="notes-top" id="notesDrag">
+      <div class="notes-title">
+        <strong>Appunti</strong>
+        <span id="notesSub">Salvataggio automatico per questa lezione</span>
+      </div>
+      <div class="notes-actions">
+        <button class="iconbtn" id="exportTxt" title="Esporta appunti in .txt">Export .txt</button>
+        <button class="iconbtn" id="clearNotes" title="Svuota appunti">Svuota</button>
+        <button class="iconbtn" id="closeNotes" title="Chiudi">Chiudi</button>
+      </div>
+    </div>
+
+    <div class="notes-body">
+      <textarea class="notes-text" id="notesText"
+        placeholder="Scrivi qui i tuoi appunti… (si salvano da soli)"></textarea>
+    </div>
+
+    <div class="notes-bottom">
+      <div><span class="status-dot" id="dot"></span><span id="status">Pronto</span></div>
+      <div id="counter">0 caratteri</div>
+    </div>
+  </section>
+
+  <script>
+    const spread = document.getElementById('spread');
+    const toggleTwo = document.getElementById('toggleTwo');
+    let twoPages = false;
+    toggleTwo.addEventListener('click', () => {
+      twoPages = !twoPages;
+      spread.classList.toggle('two', twoPages);
+      toggleTwo.setAttribute('aria-pressed', String(twoPages));
+      toggleTwo.textContent = twoPages ? '↔︎ Vista 1 pagina' : '↔︎ Vista 2 pagine';
+    });
+
+    const font = document.getElementById('font');
+    font.addEventListener('input', () => {
+      const px = Number(font.value);
+      document.querySelectorAll('.page-inner').forEach(el => el.style.fontSize = px + 'px');
+    });
+
+    const page1 = document.getElementById('page1');
+    const page2 = document.getElementById('page2');
+    document.getElementById('prev').addEventListener('click', () => page1.scrollIntoView({behavior:'smooth', block:'start'}));
+    document.getElementById('next').addEventListener('click', () => page2.scrollIntoView({behavior:'smooth', block:'start'}));
+
+    const modal = document.getElementById('modal');
+    const zoomImg = document.getElementById('zoomImg');
+    const stage = document.getElementById('stage');
+    const closeZoom = document.getElementById('closeZoom');
+    const resetZoom = document.getElementById('resetZoom');
+    const zoomIn = document.getElementById('zoomIn');
+    const zoomOut = document.getElementById('zoomOut');
+
+    const zoomThumbs = Array.from(document.querySelectorAll('img.thumb[data-zoom="true"]'));
+
+    let scale = 1, tx = 0, ty = 0;
+    let dragging = false, startX = 0, startY = 0;
+
+    function applyTransform(){
+      zoomImg.style.transform = `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(${scale})`;
+    }
+    function openZoom(src){
+      zoomImg.src = src;
+      scale = 1; tx = 0; ty = 0;
+      applyTransform();
+      modal.classList.add('open');
+      closeZoom.focus();
+    }
+    function closeZoomModal(){
+      modal.classList.remove('open');
+      dragging = false;
+    }
+
+    zoomThumbs.forEach(t => t.addEventListener('click', () => openZoom(t.src)));
+    closeZoom.addEventListener('click', closeZoomModal);
+    modal.addEventListener('click', (e) => { if(e.target === modal) closeZoomModal(); });
+
+    resetZoom.addEventListener('click', () => { scale = 1; tx = 0; ty = 0; applyTransform(); });
+    zoomIn.addEventListener('click', () => { scale = Math.min(6, +(scale + 0.2).toFixed(2)); applyTransform(); });
+    zoomOut.addEventListener('click', () => { scale = Math.max(0.6, +(scale - 0.2).toFixed(2)); applyTransform(); });
+
+    stage.addEventListener('wheel', (e) => {
+      if(!modal.classList.contains('open')) return;
+      e.preventDefault();
+      const d = Math.sign(e.deltaY);
+      scale = d > 0 ? Math.max(0.6, +(scale - 0.12).toFixed(2)) : Math.min(6, +(scale + 0.12).toFixed(2));
+      applyTransform();
+    }, {passive:false});
+
+    zoomImg.addEventListener('pointerdown', (e) => {
+      dragging = true;
+      startX = e.clientX - tx;
+      startY = e.clientY - ty;
+      zoomImg.setPointerCapture(e.pointerId);
+    });
+    zoomImg.addEventListener('pointermove', (e) => {
+      if(!dragging) return;
+      tx = e.clientX - startX;
+      ty = e.clientY - startY;
+      applyTransform();
+    });
+    zoomImg.addEventListener('pointerup', () => dragging = false);
+    zoomImg.addEventListener('pointercancel', () => dragging = false);
+
+    const presentaImg = document.getElementById('presentaImg');
+    const presentaVideo = document.getElementById('presentaVideo');
+    if(presentaImg && presentaVideo){
+      presentaImg.addEventListener('click', () => {
+        presentaImg.style.display = 'none';
+        presentaVideo.style.display = 'block';
+      });
+    }
+
+    const toggleNotes = document.getElementById('toggleNotes');
+    const notesWin = document.getElementById('notesWin');
+    const notesDrag = document.getElementById('notesDrag');
+    const notesText = document.getElementById('notesText');
+    const closeNotes = document.getElementById('closeNotes');
+    const exportTxt = document.getElementById('exportTxt');
+    const clearNotes = document.getElementById('clearNotes');
+    const statusEl = document.getElementById('status');
+    const dot = document.getElementById('dot');
+    const counter = document.getElementById('counter');
+    const notesSub = document.getElementById('notesSub');
+
+    const NOTES_KEY = `mw_notes::${location.pathname}`;
+    const POS_KEY   = `mw_notes_pos::${location.pathname}`;
+
+    function setStatus(kind, text){
+      statusEl.textContent = text;
+      dot.classList.remove('ok','warn','err');
+      if(kind) dot.classList.add(kind);
+    }
+    function getTopZ(){
+      const z = Number(notesWin.dataset.z || '80') + 1;
+      notesWin.dataset.z = String(z);
+      return z;
+    }
+    function openNotes(){
+      notesWin.classList.add('open');
+      toggleNotes.setAttribute('aria-pressed', 'true');
+      notesWin.style.zIndex = String(getTopZ());
+      notesText.focus();
+    }
+    function closeNotesWin(){
+      notesWin.classList.remove('open');
+      toggleNotes.setAttribute('aria-pressed', 'false');
+    }
+
+    toggleNotes.addEventListener('click', () => {
+      const open = notesWin.classList.contains('open');
+      open ? closeNotesWin() : openNotes();
+    });
+    closeNotes.addEventListener('click', closeNotesWin);
+
+    const saved = localStorage.getItem(NOTES_KEY);
+    if(saved !== null) {
+      notesText.value = saved;
+      setStatus('ok','Recuperati');
+    } else {
+      setStatus(null,'Pronto');
+    }
+
+    const savedPos = localStorage.getItem(POS_KEY);
+    if(savedPos){
+      try{
+        const p = JSON.parse(savedPos);
+        if(typeof p.left === 'number') notesWin.style.left = p.left + 'px';
+        if(typeof p.top === 'number')  notesWin.style.top  = p.top  + 'px';
+        notesWin.style.right = 'auto';
+        notesWin.style.bottom = 'auto';
+      }catch{}
+    }
+
+    notesSub.textContent = `Lezione: ${location.pathname.split('/').pop() || 'index.html'}`;
+
+    let saveTimer = null;
+    function scheduleSave(){
+      setStatus('warn','Scrivendo…');
+      if(saveTimer) clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => {
+        try{
+          localStorage.setItem(NOTES_KEY, notesText.value);
+          setStatus('ok','Salvati');
+        }catch(e){
+          setStatus('err','Errore salvataggio');
+        }
+      }, 350);
+    }
+
+    function updateCounter(){
+      counter.textContent = `${notesText.value.length} caratteri`;
+    }
+    updateCounter();
+
+    notesText.addEventListener('input', () => {
+      updateCounter();
+      scheduleSave();
+    });
+
+    exportTxt.addEventListener('click', () => {
+      const blob = new Blob([notesText.value], {type: 'text/plain;charset=utf-8'});
+      const a = document.createElement('a');
+      const lessonName = (location.pathname.split('/').pop() || 'lezione').replace('.html','');
+      const stamp = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+      a.href = URL.createObjectURL(blob);
+      a.download = `${lessonName}-appunti-${stamp}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        URL.revokeObjectURL(a.href);
+        a.remove();
+      }, 0);
+    });
+
+    clearNotes.addEventListener('click', () => {
+      notesText.value = '';
+      updateCounter();
+      localStorage.setItem(NOTES_KEY, '');
+      setStatus('ok','Svuotati');
+      notesText.focus();
+    });
+
+    let drag = {active:false, startX:0, startY:0, startLeft:0, startTop:0};
+    function clamp(n, min, max){return Math.max(min, Math.min(max, n));}
+
+    notesDrag.addEventListener('pointerdown', (e) => {
+      drag.active = true;
+      notesWin.style.zIndex = String(getTopZ());
+      notesDrag.setPointerCapture(e.pointerId);
+
+      const rect = notesWin.getBoundingClientRect();
+      drag.startX = e.clientX;
+      drag.startY = e.clientY;
+      drag.startLeft = rect.left;
+      drag.startTop = rect.top;
+
+      notesWin.style.left = rect.left + 'px';
+      notesWin.style.top = rect.top + 'px';
+      notesWin.style.right = 'auto';
+      notesWin.style.bottom = 'auto';
+    });
+
+    notesDrag.addEventListener('pointermove', (e) => {
+      if(!drag.active) return;
+      const dx = e.clientX - drag.startX;
+      const dy = e.clientY - drag.startY;
+
+      const rect = notesWin.getBoundingClientRect();
+      const w = rect.width, h = rect.height;
+
+      const maxLeft = window.innerWidth - w - 8;
+      const maxTop  = window.innerHeight - h - 8;
+
+      const left = clamp(drag.startLeft + dx, 8, maxLeft);
+      const top  = clamp(drag.startTop + dy, 8, maxTop);
+
+      notesWin.style.left = left + 'px';
+      notesWin.style.top = top + 'px';
+    });
+
+    notesDrag.addEventListener('pointerup', () => {
+      if(!drag.active) return;
+      drag.active = false;
+      const rect = notesWin.getBoundingClientRect();
+      localStorage.setItem(POS_KEY, JSON.stringify({left: rect.left, top: rect.top}));
+    });
+    notesDrag.addEventListener('pointercancel', () => drag.active = false);
+
+    window.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape' && modal.classList.contains('open')) closeZoomModal();
+      const isMac = navigator.platform.toLowerCase().includes('mac');
+      const cmd = isMac ? e.metaKey : e.ctrlKey;
+      if(cmd && (e.key.toLowerCase() === 'k')){
+        e.preventDefault();
+        const open = notesWin.classList.contains('open');
+        open ? closeNotesWin() : openNotes();
+      }
+    });
+  </script>
+</body>
+</html>
